@@ -8,19 +8,20 @@ The core navigation engine (`core/`) requires an automated unit testing suite th
 - Local developer machines (Windows with CMake and Ninja/MinGW/Clang/MSVC)
 - Continuous Integration runners (Linux GitHub Actions)
 - Embedded Linux and edge toolchains
+- Android NDK integration in Phase 3
 
-The prompt allows choosing between **Catch2** and **GoogleTest**.
+The architecture specification allows choosing between **Catch2** and **GoogleTest**.
 
 ## Decision
-We choose **Catch2 (v3)** as the primary unit testing framework, integrated via CMake `FetchContent` / `find_package`, complemented by an offline test runner fallback.
+We choose **GoogleTest (v1.14.0)** as the official unit testing framework, integrated via CMake `FetchContent`.
 
 ## Rationale
-1. **Modern C++ Idioms**: Catch2 is built natively for C++14/C++17, aligning cleanly with our C++17 core codebase.
-2. **Readability and Expressiveness**: Catch2's `TEST_CASE` and `SECTION` structure allows natural hierarchical test organization, where test fixtures share setup code naturally without boilerplate classes.
-3. **No External System Dependencies**: In CMake, Catch2 v3 can be automatically fetched via `FetchContent` in CI with shallow cloning, requiring zero manual package manager installation.
-4. **Offline Resilience**: The test runner is structured with a preprocessor fallback (`#if __has_include(<catch2/catch_test_macros.hpp>)`) so developers in strictly offline environments can compile and run core smoke assertions without being blocked by network fetching.
+1. **Universal Compiler Compatibility**: GoogleTest is mature, battle-tested, and compiles reliably across GCC (including older MinGW versions), Clang, Apple Clang, and MSVC without deprecation or standard library version mismatches.
+2. **First-Class Android NDK Support**: GoogleTest is the native, official testing framework used by the Android NDK and Android Open Source Project (AOSP). Using GoogleTest in `core/` guarantees seamless testability in Phase 3 under Android toolchains.
+3. **Aerospace and Robotics Standard**: Space agencies (ISRO, NASA, ESA) and ROS/ROS2 ecosystems predominantly standardize on GoogleTest for navigation and sensor fusion stacks.
+4. **Automated Discovery**: With CMake's native `include(GoogleTest)` and `gtest_discover_tests(idr_tests)`, test cases are automatically discovered and registered with `CTest` without manual maintenance.
 
 ## Consequences
-- Clean test code with natural assertion syntax (`REQUIRE`, `CHECK`).
-- Fast test builds with `ctest --test-dir build`.
-- Zero manual host dependencies required for running unit tests.
+- Clean assertions using `EXPECT_TRUE`, `EXPECT_FALSE`, `EXPECT_DOUBLE_EQ`.
+- Automated test discovery in `ctest`.
+- Seamless CI execution on both Linux and Windows runners.

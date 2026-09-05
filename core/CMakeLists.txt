@@ -25,27 +25,35 @@ endif()
 # Unit tests
 include(CTest)
 if(BUILD_TESTING)
-    find_package(Catch2 3 QUIET)
+    option(IDR_USE_FETCHED_GTEST "Fetch and link GoogleTest" ON)
 
-    if(NOT Catch2_FOUND)
-        include(FetchContent)
-        FetchContent_Declare(
-            Catch2
-            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-            GIT_TAG        v3.5.3
-            GIT_SHALLOW    TRUE
-        )
-        FetchContent_GetProperties(Catch2)
-        if(NOT catch2_POPULATED)
-            FetchContent_MakeAvailable(Catch2)
-        endif()
+    # Legacy MinGW 32-bit compilers (< GCC 8) lack C++11 std::mutex / threading support.
+    # On those toolchains, use the zero-dependency test runner so builds succeed locally.
+    if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0")
+        set(IDR_USE_FETCHED_GTEST OFF)
     endif()
 
     add_executable(idr_tests tests/test_engine.cpp)
     target_link_libraries(idr_tests PRIVATE idr_core)
 
-    if(TARGET Catch2::Catch2WithMain)
-        target_link_libraries(idr_tests PRIVATE Catch2::Catch2WithMain)
+    if(IDR_USE_FETCHED_GTEST)
+        include(FetchContent)
+        FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        v1.14.0
+            GIT_SHALLOW    TRUE
+        )
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(googletest)
+
+        target_compile_definitions(idr_tests PRIVATE IDR_USE_GTEST=1)
+        target_link_libraries(idr_tests PRIVATE GTest::gtest_main)
+
+        include(GoogleTest)
+        gtest_discover_tests(idr_tests)
+    else()
+        add_test(NAME idr_core_tests COMMAND idr_tests)
     endif()
 
     if(MSVC)
@@ -53,6 +61,4 @@ if(BUILD_TESTING)
     else()
         target_compile_options(idr_tests PRIVATE -Wall -Wextra -Wpedantic)
     endif()
-
-    add_test(NAME idr_core_tests COMMAND idr_tests)
 endif()

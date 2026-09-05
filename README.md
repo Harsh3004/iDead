@@ -9,7 +9,7 @@ idr-project/
 ├── core/                     # C++17 engine, zero external dependencies
 │   ├── include/idr/          # Public headers (imu_sample.hpp, gnss_fix.hpp, engine.hpp)
 │   ├── src/                  # Implementation (engine.cpp)
-│   ├── tests/                # Unit tests (Catch2)
+│   ├── tests/                # Unit tests (GoogleTest)
 │   └── CMakeLists.txt        # Core build specification
 ├── dataeval/                 # Python data & evaluation pipeline
 │   ├── ingest/               # Ingestion parsers for IO-VNBD dataset
