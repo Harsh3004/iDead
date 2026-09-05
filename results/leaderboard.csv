@@ -1,0 +1,1 @@
+run_id,timestamp,config,outage_s,final_pos_error_m,pct_of_distance,cep50_m,cep95_m,along_track_m,cross_track_m,heading_error_deg

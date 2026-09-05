@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dataeval"
+version = "0.1.0"
+description = "Python data and evaluation pipeline for phone-based inertial dead-reckoning (IDR)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "pandas",
+    "pyarrow",
+]
+
+[tool.setuptools.package-dir]
+"dataeval" = "."
+"dataeval.ingest" = "ingest"
+"dataeval.harness" = "harness"
+"dataeval.training" = "training"

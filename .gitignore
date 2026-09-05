@@ -1,0 +1,70 @@
+# Compiled Object Files and Libraries
+*.o
+*.obj
+*.exe
+*.dll
+*.dylib
+*.so
+*.a
+*.lib
+
+# CMake and Build outputs
+build/
+bin/
+lib/
+CMakeUserPresets.json
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Python virtual environments, caches, and build distribution
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+.venv/
+venv/
+ENV/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+
+# Data directories (raw datasets and processed artifacts are gitignored)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Results / Plots
+results/plots/*
+!results/plots/.gitkeep
+
+# Machine Learning model weights and binaries
+*.onnx
+*.tflite
+*.pt
+*.pth
+*.ckpt
+*.bin
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

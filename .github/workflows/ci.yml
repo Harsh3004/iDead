@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build Core & Test Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ninja
+        uses: ninja-build/setup-ninja@v1
+
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.x'
+
+      - name: Configure CMake (C++17 Core)
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build C++ Core and Tests
+        run: cmake --build build
+
+      - name: Run C++ Unit Tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dataeval Package
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ./dataeval
+
+      - name: Run Python Dataeval Smoke Test
+        run: |
+          python -c "import dataeval; import dataeval.ingest; import dataeval.harness; import dataeval.training; print('All dataeval packages successfully imported')"
