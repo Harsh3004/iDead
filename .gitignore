@@ -68,3 +68,5 @@ results/plots/*
 *~
 .DS_Store
 Thumbs.db
+
+docs/correspondence
