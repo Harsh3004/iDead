@@ -47,6 +47,10 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+!data/processed/splits/
+data/processed/splits/*
+!data/processed/splits/manifest.csv
+!data/processed/splits/summary.md
 
 # Results / Plots
 results/plots/*

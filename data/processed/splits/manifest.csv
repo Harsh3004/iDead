@@ -1,0 +1,42 @@
+group_id,split,run_ids,can_run_ids,phone_run_ids,paired_pair_ids,total_duration_s,total_distance_km,quality_flags,notes
+Driver_A_S1,train,S-S1|V-S1,V-S1,S-S1,pair_S1,5170.3,37.162,none,1 paired drives
+Driver_A_S2,val,S-S2|V-S2,V-S2,S-S2,pair_S2,9383.3,73.672,phone:clock_reset,1 paired drives; flags: phone:clock_reset
+Driver_A_S3_trip,train,S-S3a|S-S3b|S-S3c|V-S3a|V-S3b|V-S3c,V-S3a|V-S3b|V-S3c,S-S3a|S-S3b|S-S3c,pair_S3a|pair_S3b|pair_S3c,6844.799999999999,72.205,phone:clock_reset,3 paired drives; flags: phone:clock_reset
+Driver_A_S4,train,S-S4|V-S4,V-S4,S-S4,pair_S4,9458.0,91.347,low_confidence_offset|phone:clock_reset,1 paired drives; flags: low_confidence_offset|phone:clock_reset
+Driver_B_M,train,S-M|V-M,V-M,S-M,pair_M,10595.2,101.862,phone:clock_reset,1 paired drives; flags: phone:clock_reset
+Driver_C_St1,test,V-St1,V-St1,,,5721.2,46.957,none,standard nominal run
+Driver_C_St4,test,V-St4,V-St4,,,1359.0,28.431,none,standard nominal run
+Driver_C_St6,test,V-St6,V-St6,,,5135.9,113.424,none,standard nominal run
+Driver_C_St7,train,V-St7,V-St7,,,4509.7,89.924,can:timestamp_gap,flags: can:timestamp_gap
+Driver_D_Y1,test,S-Y1|V-Y1,V-Y1,S-Y1,pair_Y1,6998.4,58.195,can:timestamp_gap|low_confidence_offset|phone:clock_reset,1 paired drives; flags: can:timestamp_gap|low_confidence_offset|phone:clock_reset
+Driver_D_Y2,train,V-Y2,V-Y2,,,5721.2,46.957,none,standard nominal run
+Driver_E_Vfa,test,S-Vfa01|S-Vfa02|V-Vfa01|V-Vfa02,V-Vfa01|V-Vfa02,S-Vfa01|S-Vfa02,pair_Vfa01|pair_Vfa02,7900.7,181.165,none,2 paired drives
+Driver_E_Vfb,train,V-Vfb01a|V-Vfb01b|V-Vfb01c|V-Vfb01d|V-Vfb02a|V-Vfb02b|V-Vfb02c|V-Vfb02d|V-Vfb02e|V-Vfb02f|V-Vfb02g,V-Vfb01a|V-Vfb01b|V-Vfb01c|V-Vfb01d|V-Vfb02a|V-Vfb02b|V-Vfb02c|V-Vfb02d|V-Vfb02e|V-Vfb02f|V-Vfb02g,,,11518.099999999999,195.733,none,standard nominal run
+Driver_E_Vta,train,S-Vta10|S-Vta11|S-Vta12|S-Vta13|S-Vta14|S-Vta15|S-Vta16|S-Vta17|S-Vta19|S-Vta1a|S-Vta1b|S-Vta2|S-Vta20|S-Vta21|S-Vta22|S-Vta23|S-Vta24|S-Vta25|S-Vta26|S-Vta27|S-Vta28|S-Vta29|S-Vta3|S-Vta30|S-Vta4|S-Vta5|S-Vta6|S-Vta7|S-Vta8|S-Vta9|V-Vta10|V-Vta11|V-Vta12|V-Vta13|V-Vta14|V-Vta15|V-Vta16|V-Vta17|V-Vta18|V-Vta19|V-Vta1a|V-Vta1b|V-Vta2|V-Vta20|V-Vta21|V-Vta22|V-Vta23|V-Vta24|V-Vta25|V-Vta26|V-Vta27|V-Vta28|V-Vta29|V-Vta3|V-Vta30|V-Vta4|V-Vta5|V-Vta6|V-Vta7|V-Vta8|V-Vta9,V-Vta10|V-Vta11|V-Vta12|V-Vta13|V-Vta14|V-Vta15|V-Vta16|V-Vta17|V-Vta18|V-Vta19|V-Vta1a|V-Vta1b|V-Vta2|V-Vta20|V-Vta21|V-Vta22|V-Vta23|V-Vta24|V-Vta25|V-Vta26|V-Vta27|V-Vta28|V-Vta29|V-Vta3|V-Vta30|V-Vta4|V-Vta5|V-Vta6|V-Vta7|V-Vta8|V-Vta9,S-Vta10|S-Vta11|S-Vta12|S-Vta13|S-Vta14|S-Vta15|S-Vta16|S-Vta17|S-Vta19|S-Vta1a|S-Vta1b|S-Vta2|S-Vta20|S-Vta21|S-Vta22|S-Vta23|S-Vta24|S-Vta25|S-Vta26|S-Vta27|S-Vta28|S-Vta29|S-Vta3|S-Vta30|S-Vta4|S-Vta5|S-Vta6|S-Vta7|S-Vta8|S-Vta9,pair_Vta10|pair_Vta11|pair_Vta12|pair_Vta13|pair_Vta14|pair_Vta15|pair_Vta16|pair_Vta17|pair_Vta19|pair_Vta1a|pair_Vta1b|pair_Vta2|pair_Vta20|pair_Vta21|pair_Vta22|pair_Vta23|pair_Vta24|pair_Vta25|pair_Vta26|pair_Vta27|pair_Vta28|pair_Vta29|pair_Vta3|pair_Vta30|pair_Vta4|pair_Vta5|pair_Vta6|pair_Vta7|pair_Vta8|pair_Vta9,12734.0,145.765,can:zero_steering|low_confidence_offset,30 paired drives; flags: can:zero_steering|low_confidence_offset
+Driver_E_Vtb,train,S-Vtb1|S-Vtb10|S-Vtb11|S-Vtb12|S-Vtb2|S-Vtb3|S-Vtb4|S-Vtb5|S-Vtb6|S-Vtb7|S-Vtb8|S-Vtb9|V-Vtb1|V-Vtb10|V-Vtb11|V-Vtb12|V-Vtb13|V-Vtb2|V-Vtb3|V-Vtb4|V-Vtb5|V-Vtb6|V-Vtb7|V-Vtb8|V-Vtb9,V-Vtb1|V-Vtb10|V-Vtb11|V-Vtb12|V-Vtb13|V-Vtb2|V-Vtb3|V-Vtb4|V-Vtb5|V-Vtb6|V-Vtb7|V-Vtb8|V-Vtb9,S-Vtb1|S-Vtb10|S-Vtb11|S-Vtb12|S-Vtb2|S-Vtb3|S-Vtb4|S-Vtb5|S-Vtb6|S-Vtb7|S-Vtb8|S-Vtb9,pair_Vtb1|pair_Vtb10|pair_Vtb11|pair_Vtb12|pair_Vtb2|pair_Vtb3|pair_Vtb4|pair_Vtb5|pair_Vtb6|pair_Vtb7|pair_Vtb8|pair_Vtb9,11507.7,157.813,can:zero_steering|low_confidence_offset|phone:internal_gap,12 paired drives; flags: can:zero_steering|low_confidence_offset|phone:internal_gap
+Driver_E_Vw,val,S-Vw1|S-Vw10|S-Vw11|S-Vw12|S-Vw13|S-Vw14a|S-Vw14b|S-Vw14c|S-Vw15|S-Vw16a|S-Vw16b|S-Vw17|S-Vw2|S-Vw3|S-Vw4|S-Vw5|S-Vw6|S-Vw7|S-Vw8|S-Vw9|V-Vw1|V-Vw10|V-Vw11|V-Vw12|V-Vw13|V-Vw14a|V-Vw14b|V-Vw14c|V-Vw15|V-Vw16a|V-Vw16b|V-Vw17|V-Vw2|V-Vw3|V-Vw4|V-Vw5|V-Vw6|V-Vw7|V-Vw8|V-Vw9,V-Vw1|V-Vw10|V-Vw11|V-Vw12|V-Vw13|V-Vw14a|V-Vw14b|V-Vw14c|V-Vw15|V-Vw16a|V-Vw16b|V-Vw17|V-Vw2|V-Vw3|V-Vw4|V-Vw5|V-Vw6|V-Vw7|V-Vw8|V-Vw9,S-Vw1|S-Vw10|S-Vw11|S-Vw12|S-Vw13|S-Vw14a|S-Vw14b|S-Vw14c|S-Vw15|S-Vw16a|S-Vw16b|S-Vw17|S-Vw2|S-Vw3|S-Vw4|S-Vw5|S-Vw6|S-Vw7|S-Vw8|S-Vw9,pair_Vw1|pair_Vw10|pair_Vw11|pair_Vw12|pair_Vw13|pair_Vw14a|pair_Vw14b|pair_Vw14c|pair_Vw15|pair_Vw16a|pair_Vw16b|pair_Vw17|pair_Vw2|pair_Vw3|pair_Vw4|pair_Vw5|pair_Vw6|pair_Vw7|pair_Vw8|pair_Vw9,26292.1,405.392,can:zero_steering|can:zero_wheel_speed|low_confidence_offset|stationary_run,20 paired drives; flags: can:zero_steering|can:zero_wheel_speed|low_confidence_offset|stationary_run
+Driver_F_T1,train,S-T1,,S-T1,,738.379,59.753,phone:burst_sampling|phone:no_magnetometer,flags: phone:burst_sampling|phone:no_magnetometer
+Driver_F_T10,train,S-T10,,S-T10,,669.8,6.026,none,standard nominal run
+Driver_F_T11,train,S-T11,,S-T11,,568.901,2.284,none,standard nominal run
+Driver_F_T2,train,S-T2,,S-T2,,7554.945,201.234,phone:no_magnetometer,flags: phone:no_magnetometer
+Driver_F_T3,train,S-T3,,S-T3,,6469.241,151.002,phone:no_magnetometer,flags: phone:no_magnetometer
+Driver_F_T4,train,S-T4,,S-T4,,3580.236,140.47,phone:burst_sampling|phone:no_magnetometer,flags: phone:burst_sampling|phone:no_magnetometer
+Driver_F_T5,test,S-T5,,S-T5,,2036.992,96.453,phone:burst_sampling|phone:no_magnetometer,flags: phone:burst_sampling|phone:no_magnetometer
+Driver_F_T6,val,S-T6,,S-T6,,2510.857,167.004,phone:burst_sampling|phone:no_magnetometer,flags: phone:burst_sampling|phone:no_magnetometer
+Driver_F_T7,train,S-T7,,S-T7,,10170.086,246.859,phone:no_magnetometer,flags: phone:no_magnetometer
+Driver_F_T8,train,S-T8,,S-T8,,4833.806,96.122,phone:no_magnetometer,flags: phone:no_magnetometer
+Driver_F_T9,train,S-T9,,S-T9,,7990.717,171.154,phone:no_magnetometer,flags: phone:no_magnetometer
+Driver_G_I,train,S-I,,S-I,,579.9,0.059,phone:internal_gap,flags: phone:internal_gap
+Driver_H_A1,train,S-A1,,S-A1,,2970.605,0.264,phone:low_sample_rate,flags: phone:low_sample_rate
+Driver_H_A10,train,S-A10,,S-A10,,4442.5,51.884,phone:low_sample_rate|phone:raw_speed_kmh,flags: phone:low_sample_rate|phone:raw_speed_kmh
+Driver_H_A11,train,S-A11,,S-A11,,2577.0,44.525,phone:low_sample_rate,flags: phone:low_sample_rate
+Driver_H_A12,val,S-A12,,S-A12,,2335.999,41.001,phone:low_sample_rate,flags: phone:low_sample_rate
+Driver_H_A13,train,S-A13,,S-A13,,4591.5,72.736,phone:low_sample_rate,flags: phone:low_sample_rate
+Driver_H_A2,test,S-A2,,S-A2,,5814.5,0.726,phone:low_sample_rate|phone:raw_speed_kmh,flags: phone:low_sample_rate|phone:raw_speed_kmh
+Driver_H_A3,train,S-A3,,S-A3,,5566.028,0.281,phone:low_sample_rate,flags: phone:low_sample_rate
+Driver_H_A4,train,S-A4,,S-A4,,3282.8,54.72,phone:delimiter_repaired,flags: phone:delimiter_repaired
+Driver_H_A5,train,S-A5,,S-A5,,8504.349,128.616,none,standard nominal run
+Driver_H_A6,train,S-A6,,S-A6,,8537.402,177.692,none,standard nominal run
+Driver_H_A7,train,S-A7,,S-A7,,4387.1,104.016,none,standard nominal run
+Driver_H_A8,train,S-A8,,S-A8,,6661.6,135.846,none,standard nominal run
+Driver_H_A9,test,S-A9,,S-A9,,5980.499,66.095,phone:low_sample_rate|phone:raw_speed_kmh,flags: phone:low_sample_rate|phone:raw_speed_kmh
