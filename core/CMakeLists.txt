@@ -8,6 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Dependency-free core library
 add_library(idr_core
     src/engine.cpp
+    src/strapdown.cpp
 )
 
 target_include_directories(idr_core
@@ -20,6 +21,18 @@ if(MSVC)
     target_compile_options(idr_core PRIVATE /W4)
 else()
     target_compile_options(idr_core PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+# Replay driver CLI
+add_executable(idr_replay
+    src/replay/replay_driver.cpp
+)
+target_link_libraries(idr_replay PRIVATE idr_core)
+
+if(MSVC)
+    target_compile_options(idr_replay PRIVATE /W4)
+else()
+    target_compile_options(idr_replay PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 # Unit tests
@@ -35,6 +48,9 @@ if(BUILD_TESTING)
 
     add_executable(idr_tests tests/test_engine.cpp)
     target_link_libraries(idr_tests PRIVATE idr_core)
+
+    add_executable(idr_strapdown_tests tests/test_strapdown.cpp)
+    target_link_libraries(idr_strapdown_tests PRIVATE idr_core)
 
     if(IDR_USE_FETCHED_GTEST)
         include(FetchContent)
@@ -52,13 +68,17 @@ if(BUILD_TESTING)
 
         include(GoogleTest)
         gtest_discover_tests(idr_tests)
+        add_test(NAME idr_strapdown_tests COMMAND idr_strapdown_tests)
     else()
         add_test(NAME idr_core_tests COMMAND idr_tests)
+        add_test(NAME idr_strapdown_tests COMMAND idr_strapdown_tests)
     endif()
 
     if(MSVC)
         target_compile_options(idr_tests PRIVATE /W4)
+        target_compile_options(idr_strapdown_tests PRIVATE /W4)
     else()
         target_compile_options(idr_tests PRIVATE -Wall -Wextra -Wpedantic)
+        target_compile_options(idr_strapdown_tests PRIVATE -Wall -Wextra -Wpedantic)
     endif()
 endif()

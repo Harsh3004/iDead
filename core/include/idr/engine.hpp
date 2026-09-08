@@ -2,6 +2,7 @@
 
 #include "idr/imu_sample.hpp"
 #include "idr/gnss_fix.hpp"
+#include "idr/strapdown.hpp"
 
 namespace idr {
 
@@ -9,8 +10,7 @@ namespace idr {
  * @brief Core Inertial Dead-Reckoning Engine.
  *
  * Consumes abstract ImuSample and optional GnssFix streams.
- * In this initial stage, stores the latest sample to validate the
- * build system and cross-platform frontend interface.
+ * Integrates strapdown inertial navigation mechanics across outage windows.
  */
 class IdrEngine {
 public:
@@ -36,6 +36,25 @@ public:
     void processGnss(const GnssFix& fix);
 
     /**
+     * @brief Explicitly initialize strapdown navigation state.
+     */
+    void initializeStrapdown(
+        double t0,
+        double lat0,
+        double lon0,
+        double alt0,
+        double speed_ms,
+        double heading_deg,
+        const Vector3d& initial_accel = Vector3d(0.0, 0.0, StrapdownIns::kGravity)
+    ) noexcept;
+
+    /**
+     * @brief Access the internal Strapdown INS instance.
+     */
+    const StrapdownIns& getStrapdown() const noexcept { return strapdown_; }
+    StrapdownIns& getStrapdown() noexcept { return strapdown_; }
+
+    /**
      * @brief Retrieve the most recently received IMU sample.
      */
     const ImuSample& getLastImu() const;
@@ -56,15 +75,16 @@ public:
     bool hasGnss() const noexcept;
 
     /**
-     * @brief Reset internal states and stored samples.
+     * @brief Reset internal states, stored samples, and strapdown integrator.
      */
     void reset() noexcept;
 
 private:
-    ImuSample last_imu_{};
-    GnssFix   last_gnss_{};
-    bool      has_imu_{false};
-    bool      has_gnss_{false};
+    ImuSample    last_imu_{};
+    GnssFix      last_gnss_{};
+    bool         has_imu_{false};
+    bool         has_gnss_{false};
+    StrapdownIns strapdown_{};
 };
 
 } // namespace idr
