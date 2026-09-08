@@ -1,1 +1,378 @@
-run_id,timestamp,config,outage_s,final_pos_error_m,pct_of_distance,cep50_m,cep95_m,along_track_m,cross_track_m,heading_error_deg
+run_id,timestamp,config,outage_s,final_pos_error_m,pct_of_distance,cep50_m,cep95_m,along_track_m,cross_track_m,heading_error_deg,outage_id,split,source_side,has_ground_truth,skip_reason
+S-A2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A2__10s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A2__30s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A2__60s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A2__120s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A2__180s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A9__10s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A9__30s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A9__60s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A9__120s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A9__180s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T5__10s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T5__30s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T5__60s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T5__120s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T5__180s__0,test,phone,False,unpaired_run: no independent cross-stream ground truth
+pair_Vfa01,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,32.784932853572,27.406303560791695,10.052633713979226,30.115978475031472,-0.8469166573589195,32.773969386034835,24.494998931884766,pair_Vfa01__10s__0,test,phone,True,
+pair_Vfa01,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,159.49011904455446,32.458321688836094,59.02563134360143,150.1877277336427,77.72282520086797,139.27153146049088,24.4240140914917,pair_Vfa01__30s__0,test,phone,True,
+pair_Vfa01,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,42.808766453836924,6.380661819794869,24.43349952814168,42.387524865037186,-20.875423965359296,37.37384885460427,7.21099853515625,pair_Vfa01__60s__0,test,phone,True,
+pair_Vfa01,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,862.2665273002301,96.85423251796695,313.42613959442156,839.7965397404378,-789.2947081613132,-347.0960402505217,35.82698440551758,pair_Vfa01__120s__0,test,phone,True,
+pair_Vfa01,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,523.3153639903363,14.33609686728125,113.09102318373931,459.75460782106967,-440.90773194537564,281.86742090719554,22.301039695739746,pair_Vfa01__180s__0,test,phone,True,
+pair_Vfa02,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,73.80547250874345,25.839995546488638,57.88202903011333,71.55078300929986,-67.46917918066478,-29.918631721463726,14.644012451171875,pair_Vfa02__10s__0,test,phone,True,
+pair_Vfa02,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,183.15885554414075,21.894384394064463,154.19210032242125,179.30577778314603,164.96479840944912,79.58518821753506,8.093994140625,pair_Vfa02__30s__0,test,phone,True,
+pair_Vfa02,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,233.93326863974553,14.159672260146772,87.03396024907607,211.09195289824444,-219.03244457568059,82.15056196495212,16.675994873046875,pair_Vfa02__60s__0,test,phone,True,
+pair_Vfa02,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,2159.146531363322,70.61150746953315,765.0884373542251,1986.9383968725,-1399.1966209508796,-1644.3987150921869,68.74851989746094,pair_Vfa02__120s__0,test,phone,True,
+pair_Vfa02,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,254.03001421597293,4.9019311036256505,282.06614033870125,542.1198982689554,45.19445204232528,-249.979887897251,40.1930046081543,pair_Vfa02__180s__0,test,phone,True,
+pair_Y1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,1030.5022964275083,873.8691577599825,947.7582493818836,1022.8095562469979,-248.73425795228678,1000.0296065817045,122.7509994506836,pair_Y1__10s__0,test,phone,True,
+pair_Y1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,838.9988341647764,168.53391278108901,808.3166641742998,917.7151763747785,216.56488465789323,-810.592207556322,89.22098922729492,pair_Y1__30s__0,test,phone,True,
+pair_Y1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,1528.8624725893167,135.7118680584847,1233.4409179245333,1517.9796034551139,1216.2725301910027,926.4806249094961,42.18499946594238,pair_Y1__60s__0,test,phone,True,
+pair_Y1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1046.5037993470676,90.47783453820489,921.6971423565903,1051.009838426952,1008.6938393435701,278.6377976467646,24.585464477539062,pair_Y1__120s__0,test,phone,True,
+pair_Y1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,3023.9568254333626,121.19031522506316,1329.711886575452,2754.6981422574113,-2917.1691802245796,-795.989148996405,142.68099975585938,pair_Y1__180s__0,test,phone,True,
+S-A1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A1__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A1__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A1__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A1__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A1__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A10__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A10__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A10__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A10__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A10__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A11__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A11__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A11__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A11__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A11__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A13,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A13__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A13,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A13__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A13,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A13__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A13,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A13__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A13,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A13__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A3__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A3__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A3__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A3__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A3__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A4__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A4__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A4__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A4__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A4__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A5__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A5__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A5__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A5__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A5__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A6__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A6__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A6__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A6__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A6__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A7__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A7__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A7__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A7__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A7__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A8__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A8__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A8__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A8__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A8__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-I,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-I__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-I,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-I__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-I,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-I__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-I,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-I__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T1__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T1__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T1__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T1__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T1__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T10__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T10__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T10__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T10__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T10__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T11__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T11__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T11__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T11__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T11__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T2__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T2__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T2__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T2__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T2__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T3__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T3__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T3__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T3__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T3__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T4__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T4__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T4__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T4__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T4__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T7__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T7__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T7__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T7__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T7__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T8__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T8__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T8__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T8__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T8__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T9__10s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T9__30s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T9__60s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T9__120s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T9__180s__0,train,phone,False,unpaired_run: no independent cross-stream ground truth
+pair_M,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,32.8278838131513,15.588528242105667,38.341659954701946,39.5511930295706,-32.8137281737243,-0.9629008187557346,3.800018310546875,pair_M__10s__0,train,phone,True,
+pair_M,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,64.0447113751218,17.84747736282795,40.38619142395804,60.419408216643646,-31.07470656891349,56.00062615340045,9.949003458023071,pair_M__30s__0,train,phone,True,
+pair_M,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,366.73555090679434,74.0022984783221,213.7484674818574,326.46527592585085,-200.71216580327743,306.94148757931475,106.07199096679688,pair_M__60s__0,train,phone,True,
+pair_M,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1475.9880875084718,103.01462680556006,222.84346164200048,1338.1714894760871,-1183.359624305625,-882.1550823474956,116.71000671386719,pair_M__120s__0,train,phone,True,
+pair_M,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1607.9219661544562,92.8445433501424,907.011029967156,1607.9529089504272,1452.3260049223293,689.8267536027049,24.178985595703125,pair_M__180s__0,train,phone,True,
+pair_S1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,6.436525837718606,12.216220595277886,7.451311096480692,11.073935594919861,-6.421684329162883,-0.4368687215691893,13.134994506835938,pair_S1__10s__0,train,phone,True,
+pair_S1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,49.28485251748343,12.712163571681776,19.39675715956556,47.410850531377434,-45.08481913738664,19.908799966942464,3.470001220703125,pair_S1__30s__0,train,phone,True,
+pair_S1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,228.4521466202641,63.68542175419506,98.93520485838562,196.51290930863075,-171.8682478200625,150.50674830543022,104.55998229980469,pair_S1__60s__0,train,phone,True,
+pair_S1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,238.6947019140337,18.296430644572208,42.96925472940117,185.89619600408474,-50.2660649102344,-233.34188078274894,91.63104057312012,pair_S1__120s__0,train,phone,True,
+pair_S1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1639.0035737696824,139.7066014234396,557.0498887517175,1555.966261521349,-1635.3997730149235,108.38138521505465,169.3990020751953,pair_S1__180s__0,train,phone,True,
+pair_S3a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,17.087585312500217,10.096929741243855,4.123552271986357,14.721603148390884,4.944367540888434,-16.35662037661977,14.71099853515625,pair_S3a__10s__0,train,phone,True,
+pair_S3a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,5.1491076577257395,36.89312714873793,7.804768302001284,8.258344615962262,-5.141723683468334,0.27567314812982957,6.8589935302734375,pair_S3a__30s__0,train,phone,True,
+pair_S3a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,233.07909276487484,36.09960833610656,98.67302142806506,211.08501401114256,44.512833341436966,228.78912994672578,33.48699188232422,pair_S3a__60s__0,train,phone,True,
+pair_S3a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,591.0429706670794,69.40102196463495,437.7270121191318,582.7694777193393,554.2920817143978,205.13550483941594,5.317451477050781,pair_S3a__120s__0,train,phone,True,
+pair_S3a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1657.7557183432132,116.66954412745231,1066.1971110042143,1581.6280030766648,281.58070781434765,1633.5703207176912,66.26400375366211,pair_S3a__180s__0,train,phone,True,
+pair_S3b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,28.521015609520692,97.7295275816562,13.30903733499839,26.155441158852476,-11.307252192807697,26.18389151173028,89.364013671875,pair_S3b__10s__0,train,phone,True,
+pair_S3b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,59.705060038959665,96.22965005057665,18.88570967619877,51.206426249925926,-59.056321152685726,-8.77714903355553,91.7450008392334,pair_S3b__30s__0,train,phone,True,
+pair_S3b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,364.8289311943204,117.84238720855144,175.2470350590021,360.75472045125696,338.3852892629793,-136.36369853274846,9.742385864257812,pair_S3b__60s__0,train,phone,True,
+pair_S3b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,413.64719926997566,58.20574403385963,230.05711358475494,426.79610979265493,404.4365670280121,86.82613617019085,5.400003433227539,pair_S3b__120s__0,train,phone,True,
+pair_S3b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,702.932797679813,64.4091985120565,217.5648508161488,632.50213085559,-541.5081005511316,448.1983439147264,59.09600067138672,pair_S3b__180s__0,train,phone,True,
+pair_S3c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,7.987350078430234,6.602691869622385,5.663986962320147,7.062220145485515,7.7899415504501865,-1.7648144712032021,3.98199462890625,pair_S3c__10s__0,train,phone,True,
+pair_S3c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,39.20108101832185,4.341020105994133,40.645276248385144,50.75506660036235,17.353263299065922,-35.15087969726315,4.600006103515625,pair_S3c__30s__0,train,phone,True,
+pair_S3c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,371.36560361590256,160.30533186015845,218.21744073528862,369.24108495309673,269.2896971740535,-255.72350125364034,18.93499755859375,pair_S3c__60s__0,train,phone,True,
+pair_S3c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,2767.6064549235416,127.96680250148253,1004.1894675305732,2634.828242146284,-503.80473043184344,-2721.282913111923,120.48199558258057,pair_S3c__120s__0,train,phone,True,
+pair_S3c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1263.2452991417092,31.5220098765216,444.01545932168835,1114.6977215894149,-1263.1300210776087,12.200964944545717,2.790985107421875,pair_S3c__180s__0,train,phone,True,
+pair_S4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,60.56338648394706,165.02964569324283,20.771165505433686,56.835688516374255,58.14468191487968,16.94410469971588,15.136993408203125,pair_S4__10s__0,train,phone,True,
+pair_S4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,213.95769195328353,155.19828227229738,62.80439013663718,197.39012603624317,-204.12483492723766,64.1226534991525,164.83999633789062,pair_S4__30s__0,train,phone,True,
+pair_S4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,4318.550902924377,307.4130722172803,4545.923181666496,4768.02237328697,3857.6153109813536,1942.8785843216099,54.28900146484375,pair_S4__60s__0,train,phone,True,
+pair_S4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,4597.689384777245,238.72099946408662,3674.8068977277107,4597.383765502361,4505.020645722628,-917.4533826386775,1.6630096435546875,pair_S4__120s__0,train,phone,True,
+pair_S4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1226.2490149734879,92.21887255616778,725.0809808087212,1234.1773920881355,1087.7735158137114,-566.1063866265657,41.1769962310791,pair_S4__180s__0,train,phone,True,
+pair_Vta10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,1.8501730956502644,0.6923722965520447,4.477749932748695,6.374551348606767,1.6858441274150424,0.762279741927854,0.8499755859375,pair_Vta10__10s__0,train,phone,True,
+pair_Vta10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,450.7602776420453,76.20989183245767,135.47276337239566,415.10417322132815,-393.6448872440522,-219.60918664623114,67.32899475097656,pair_Vta10__30s__0,train,phone,True,
+pair_Vta10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,687.575889216678,53.65851936114081,123.12761152827687,613.1048962664308,-142.84117041886316,-672.5584907025374,61.64898681640625,pair_Vta10__60s__0,train,phone,True,
+pair_Vta10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1051.4782285297474,35.58156214924203,617.7060914061228,1067.2447996899004,1026.4669121996415,228.08964658915858,21.483001708984375,pair_Vta10__120s__0,train,phone,True,
+pair_Vta11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,96.58799395476038,114.2321159881146,50.535286810886774,83.29725779398936,-77.72880057725901,-57.33652449907143,139.36601638793945,pair_Vta11__10s__0,train,phone,True,
+pair_Vta11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,546.885603912623,170.96169389470515,181.15089219824225,518.9050944769671,-105.23306567552335,-536.6588129873,83.114013671875,pair_Vta11__30s__0,train,phone,True,
+pair_Vta12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,105.74860629959167,58.845383767927174,110.11458780216788,112.51109496828869,105.71755850299606,2.56383559300356,1.0769996643066406,pair_Vta12__10s__0,train,phone,True,
+pair_Vta12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,120.05011704746872,22.082522441035252,77.48307805341597,110.31780666067543,-10.74460645232302,119.56803770746319,23.309998512268066,pair_Vta12__30s__0,train,phone,True,
+pair_Vta13,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,37.6738563531873,17.229394360460635,29.98497348503947,36.748351701389296,14.490010083523227,34.77586941122896,9.851000785827637,pair_Vta13__10s__0,train,phone,True,
+pair_Vta14,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,44.862726333770226,29.1526284783525,45.10785549223186,48.19959790199557,43.22143112100421,12.023991717978207,9.022001266479492,pair_Vta14__10s__0,train,phone,True,
+pair_Vta14,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,149.41430920081964,30.674579602967565,60.479419868666014,133.74096546677305,-40.87097729013496,143.71565889398732,39.67100143432617,pair_Vta14__30s__0,train,phone,True,
+pair_Vta14,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,135.02451534331522,13.355591970221765,48.095789956218,123.4945779940754,12.602618994959787,134.43551764442523,13.382986068725586,pair_Vta14__60s__0,train,phone,True,
+pair_Vta14,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,766.903853069171,34.12832857464777,229.05641010052912,721.9519797685202,186.0641459243742,-744.0116158370358,18.683990478515625,pair_Vta14__120s__0,train,phone,True,
+pair_Vta14,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1059.917553118741,34.45691642313574,357.8900856585453,1026.392410995626,509.6371675795615,929.3834424333766,7.932003974914551,pair_Vta14__180s__0,train,phone,True,
+pair_Vta15,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,70.05853014288009,40.9869927649959,76.7017030405272,83.00209787210065,-69.97137176374754,3.492127684325588,1.0110034942626953,pair_Vta15__10s__0,train,phone,True,
+pair_Vta15,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,262.3825943317848,41.39172939376843,156.77205655432624,248.58973368178252,-241.0888778037026,103.53705643516955,34.53700637817383,pair_Vta15__30s__0,train,phone,True,
+pair_Vta15,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,440.83365375655393,37.200345381140224,118.269017144495,391.2251354231867,-183.68263892227597,400.73712852384216,46.34101104736328,pair_Vta15__60s__0,train,phone,True,
+pair_Vta16,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,30.650223585586094,20.246020760407905,27.675653729415718,30.10085790170343,-30.03958160967769,-6.087654586573757,3.76800537109375,pair_Vta16__10s__0,train,phone,True,
+pair_Vta16,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,38.82402173734261,22.844071567740883,49.84799858286155,72.14644287253297,38.820603521970284,0.5193717880066728,51.4169921875,pair_Vta16__30s__0,train,phone,True,
+pair_Vta16,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,643.5927488872348,64.27911413719738,231.7472455142035,594.6633049746564,-33.79220367432282,-642.7162395490144,53.268959045410156,pair_Vta16__60s__0,train,phone,True,
+pair_Vta16,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,754.2598243979909,30.66249583030125,64.33916619667566,667.2068018639525,527.3873946203998,-539.2627908790341,3.074005126953125,pair_Vta16__120s__0,train,phone,True,
+pair_Vta16,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,3740.2832432888417,169.996092191669,1132.1602363245952,3536.7283808325233,417.0598555352327,3716.958735629456,66.24398803710938,pair_Vta16__180s__0,train,phone,True,
+pair_Vta17,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,11.459076809178699,9.108055945736265,5.847609001941534,10.847988067973791,-11.459032213028454,-0.03272902637638353,2.7450103759765625,pair_Vta17__10s__0,train,phone,True,
+pair_Vta17,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,139.46532187935935,99.36165874589487,40.166490709451764,138.60511052801397,-129.51253161954773,-51.74085016345479,22.682998657226562,pair_Vta17__30s__0,train,phone,True,
+pair_Vta17,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,403.79792522294264,71.52730949924819,35.37805174560043,338.833604789908,-315.3509796437271,-252.19379296696377,124.2340087890625,pair_Vta17__60s__0,train,phone,True,
+pair_Vta17,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,353.57296711091146,31.89515697970663,279.5784986975997,505.99769765540435,331.88218933921564,-121.92657163157014,92.64198303222656,pair_Vta17__120s__0,train,phone,True,
+pair_Vta17,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,859.5522759390242,63.386790065195086,250.41906470306384,760.6311846736273,-859.280779547604,-22.15687142943517,73.28300476074219,pair_Vta17__180s__0,train,phone,True,
+pair_Vta1a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,19.646004132734,10.005749419112743,7.295313523573251,18.397674950968522,-16.45603642170973,-10.731462257425465,8.587982177734375,pair_Vta1a__10s__0,train,phone,True,
+pair_Vta1a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,194.60634717318533,36.154415336710535,57.07520704125142,177.5377955828129,-119.53019519783268,-153.56967678596914,27.453980445861816,pair_Vta1a__30s__0,train,phone,True,
+pair_Vta1a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,61.55697922584009,5.433057334298078,35.175056892911066,49.47272145547676,61.358452982858076,-4.9395912848813115,22.57403564453125,pair_Vta1a__60s__0,train,phone,True,
+pair_Vta1a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1504.0019532418842,61.33331467544566,762.637209239879,1432.2429586890169,-1048.1384648756966,1078.5158675697808,27.682988166809082,pair_Vta1a__120s__0,train,phone,True,
+pair_Vta1a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1846.0528660045834,89.54211633125789,376.78557817942146,1654.0050391239129,-1493.904969711975,-1084.3978019624924,94.69599914550781,pair_Vta1a__180s__0,train,phone,True,
+pair_Vta1b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,43.28870621588476,34.01945317595597,14.362691654468168,40.12605414929318,-41.2698691339471,13.065357595514948,3.65850830078125,pair_Vta1b__10s__0,train,phone,True,
+pair_Vta1b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,79.83221241107697,23.335425777260227,44.74704742979247,77.57362531926664,-55.01069127036782,-57.85297147167744,30.573997259140015,pair_Vta1b__30s__0,train,phone,True,
+pair_Vta1b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,316.0970337128445,36.873197809655416,89.57985577515015,295.56179947349864,267.47177366958863,168.45552969255493,1.979095458984375,pair_Vta1b__60s__0,train,phone,True,
+pair_Vta2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,1.6326743219671034,,1.5549645555303644,1.6326743219671034,-1.5753947435706412,-0.42866834724623226,2.718994140625,pair_Vta2__10s__0,train,phone,True,stationary_run: true distance 0.66m < 1.0m threshold
+pair_Vta2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,72.53310187989938,21.717502392554717,69.30278419934356,98.5326328623369,-65.87970211439753,30.34677241617731,7.28973388671875,pair_Vta2__30s__0,train,phone,True,
+pair_Vta2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,572.786521010249,50.82630652076928,184.58068139816731,541.8566984995824,-305.33138349563,-484.635705457472,45.78999900817871,pair_Vta2__60s__0,train,phone,True,
+pair_Vta2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,358.9429282858408,32.059679907728565,133.01150814615875,341.12319379743695,77.50098982388232,350.4799066352488,29.049049377441406,pair_Vta2__120s__0,train,phone,True,
+pair_Vta2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,506.51337153217526,26.055608594396695,300.6165512866661,506.7323627338121,-482.97381683963647,-152.58356485754695,86.2589979171753,pair_Vta2__180s__0,train,phone,True,
+pair_Vta20,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,3.3262003407091605,,3.4239585298651134,3.568463925458103,2.8166753564067024,-1.7691659871361964,3.1300048828125,pair_Vta20__10s__0,train,phone,True,stationary_run: true distance 0.37m < 1.0m threshold
+pair_Vta20,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,3.5531672414394038,351.6157242855795,3.2711057495328397,3.5072880793333168,2.3768985102917473,-2.641088958295135,3.1300048828125,pair_Vta20__30s__0,train,phone,True,
+pair_Vta20,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,5.8067808975986095,159.56022570992582,5.9209865103913675,6.0370637874352235,4.010386317086283,-4.1994649595655975,3.1300048828125,pair_Vta20__60s__0,train,phone,True,
+pair_Vta20,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,5.739215894671106,99.75759104771305,4.154422783536233,6.027737437245336,3.9864389314535758,-4.128789618040404,3.1300048828125,pair_Vta20__120s__0,train,phone,True,
+pair_Vta20,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,5.3485804238390005,61.20162545778324,3.7168843339246367,6.019037597273109,3.780163769550889,-3.783870296984545,3.1300048828125,pair_Vta20__180s__0,train,phone,True,
+pair_Vta21,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,65.54183970177981,78.0486605105971,31.651059199741738,56.63609916945325,54.01180941422553,37.12751569288193,34.86100387573242,pair_Vta21__10s__0,train,phone,True,
+pair_Vta21,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,500.2001723482476,105.36313049101685,375.06493460111244,484.1149167640402,-442.36619220335814,233.45802541564174,43.97958850860596,pair_Vta21__30s__0,train,phone,True,
+pair_Vta21,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,1407.3652680399855,221.20175717656147,523.8182057241347,1316.378203413847,-1201.2715990871507,733.0879744494314,127.74800109863281,pair_Vta21__60s__0,train,phone,True,
+pair_Vta21,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1460.7032585144914,93.45016618957392,236.61426721278298,1296.7170899912444,-1102.4290223937294,958.186921541909,119.48800659179688,pair_Vta21__120s__0,train,phone,True,
+pair_Vta21,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,2616.7985676711014,108.96324113402662,1079.3075282269047,2491.204078706749,1261.6107436922548,2292.865316682147,52.33723974227905,pair_Vta21__180s__0,train,phone,True,
+pair_Vta22,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,68.81825922181169,53.81041769986776,47.60297354666229,66.22423775008595,-68.4505635092419,-7.105767097133963,4.2969970703125,pair_Vta22__10s__0,train,phone,True,
+pair_Vta22,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,47.63036849129203,14.850176816292057,48.150439975366034,54.64735257564146,-45.71896896872105,-13.357937810487972,21.570999145507812,pair_Vta22__30s__0,train,phone,True,
+pair_Vta22,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,440.625192344774,67.66067165300673,230.91902522375227,424.0101075340241,96.00955361314485,-430.0412139998923,28.00800323486328,pair_Vta22__60s__0,train,phone,True,
+pair_Vta22,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1457.4667274022531,112.34479276653182,427.87089071968364,1334.4438954102034,-1376.4433743850877,-479.35207568870663,120.43800067901611,pair_Vta22__120s__0,train,phone,True,
+pair_Vta23,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,28.623700583367803,27.31770121184574,13.010231607481469,27.921183584674974,13.364257774214913,25.312287186594293,9.930999755859375,pair_Vta23__10s__0,train,phone,True,
+pair_Vta23,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,189.87305141101288,66.90760009439803,82.30200762130016,176.85407323390538,-186.60753316891996,-35.06837721469148,23.14691925048828,pair_Vta23__30s__0,train,phone,True,
+pair_Vta23,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,420.1751653936183,79.21726979402663,210.34550125388378,393.6840256649563,15.523649682111639,-419.890375890094,41.76499938964844,pair_Vta23__60s__0,train,phone,True,
+pair_Vta24,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,25.68256654626689,73.73689601632152,4.2271903076582245,21.731917305334,-25.298517848704954,-4.424971435127101,10.198997497558594,pair_Vta24__10s__0,train,phone,True,
+pair_Vta24,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,168.1468721482812,72.93647870090574,21.952832925660168,149.08235034418504,17.290737777590714,-167.25523204681522,81.00899505615234,pair_Vta24__30s__0,train,phone,True,
+pair_Vta24,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,341.69198063829015,79.63900515962987,132.55743822211306,349.4962517285565,-88.27825221633618,330.0938481692133,84.15699768066406,pair_Vta24__60s__0,train,phone,True,
+pair_Vta25,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,1.211294556352744,,1.1021478892758818,1.211294556352744,-0.32287919748098703,-1.1674688599300904,1.0239944458007812,pair_Vta25__10s__0,train,phone,True,stationary_run: true distance 0.62m < 1.0m threshold
+pair_Vta25,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,13.377199243477987,79.56342999089198,1.2611523141281638,12.24107235473191,-3.6870031475104135,12.859069069139546,99.96600341796875,pair_Vta25__30s__0,train,phone,True,
+pair_Vta26,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,8.476784804475804,91.62827519559075,0.5343626166087352,5.971798643439811,-8.47603180942342,0.11290069873369868,8.941001892089844,pair_Vta26__10s__0,train,phone,True,
+pair_Vta26,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,1.4559396224971421,131.13965414334515,1.8737999593237202,1.9434391477894821,-1.4335496692255514,0.25435317833675347,174.30300903320312,pair_Vta26__30s__0,train,phone,True,
+pair_Vta26,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,20.651783054949878,85.7769557042895,1.884315896537094,20.55123389028174,18.700842882416218,-8.76211232522483,149.010009765625,pair_Vta26__60s__0,train,phone,True,
+pair_Vta26,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,483.83491069146197,81.84937964669689,124.88596627312825,448.44011885736165,474.0039570048582,-97.03975371825965,18.329004287719727,pair_Vta26__120s__0,train,phone,True,
+pair_Vta27,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,337.8663010203509,236.1891619110406,343.1777381300616,349.7274400755301,-314.01193167434553,124.69333245527216,27.60302734375,pair_Vta27__10s__0,train,phone,True,
+pair_Vta27,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,376.9199834138152,82.08012417065049,350.4221081259112,373.3850917737611,-376.37831422977536,-20.199437698324544,30.072021484375,pair_Vta27__30s__0,train,phone,True,
+pair_Vta27,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,870.0027515676247,95.11347133080226,585.4046230539682,834.1182458978451,-751.1691526078469,-438.8996773040677,52.89898681640625,pair_Vta27__60s__0,train,phone,True,
+pair_Vta27,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,789.9995513579893,47.1646169516341,626.9204009459683,833.8742361232719,-195.97765971585162,765.2830108933819,1.106999397277832,pair_Vta27__120s__0,train,phone,True,
+pair_Vta27,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1905.3803714342253,75.97390478186325,898.5464948749589,1853.454554307849,-1280.0157331255102,1411.352324953678,29.999000549316406,pair_Vta27__180s__0,train,phone,True,
+pair_Vta28,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,3.2602751484246397,,3.4074127268392873,3.546354853778269,-3.19575678964467,0.6453953033568092,116.85798645019531,pair_Vta28__10s__0,train,phone,True,stationary_run: true distance 0.74m < 1.0m threshold
+pair_Vta28,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,391.84038291242916,116.4166507844801,124.62719225707328,365.05689655261955,-66.33379455925474,386.1848353917895,70.56900024414062,pair_Vta28__30s__0,train,phone,True,
+pair_Vta28,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,364.8961569820112,48.83996032513319,77.64463569510836,293.26610477330183,-352.3670841358504,94.78081309253972,133.4429931640625,pair_Vta28__60s__0,train,phone,True,
+pair_Vta28,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,385.218162419545,35.53049543965619,312.05026798036624,646.5014908643888,362.83215405158353,-129.39944931992108,17.26202392578125,pair_Vta28__120s__0,train,phone,True,
+pair_Vta28,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,3747.2285006504103,195.4102348192916,1822.2418743387589,3524.2533970931754,-3739.4348366153567,237.32728308607943,173.34698486328125,pair_Vta28__180s__0,train,phone,True,
+pair_Vta29,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,16.923089365043744,53.579098598726496,9.64768681544135,17.206332574872707,-12.277727214857217,-11.646809274712705,22.907012939453125,pair_Vta29__10s__0,train,phone,True,
+pair_Vta29,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,170.07782441943596,414.65849504383715,84.44212598508193,169.19069895911684,168.13373055596443,-25.642177528153717,7.94000244140625,pair_Vta29__30s__0,train,phone,True,
+pair_Vta29,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,673.0211636164382,66.41869437402768,176.99708819550278,633.3480339025092,-315.3458015959774,594.5518267818911,47.999990463256836,pair_Vta29__60s__0,train,phone,True,
+pair_Vta29,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1132.156506905225,53.59711096214941,500.1035289701681,1110.620736811403,1124.840952150036,128.9501676450401,35.68900108337402,pair_Vta29__120s__0,train,phone,True,
+pair_Vta29,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,221.07107341344414,9.089760775749465,160.3865454155648,366.8109304204158,96.85657865719818,198.72558309803225,39.959004402160645,pair_Vta29__180s__0,train,phone,True,
+pair_Vta3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,85.3329021189527,139.0594099056521,127.20637643779554,146.10444721984123,85.10144612042525,-6.283466626853642,20.603004455566406,pair_Vta3__10s__0,train,phone,True,
+pair_Vta30,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,33.24494931832466,82.51813054696612,12.899774823050077,30.53577993672785,-33.19377471753457,-1.8446595282965053,73.70699691772461,pair_Vta30__10s__0,train,phone,True,
+pair_Vta30,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,114.03064517725656,48.735265467930695,65.54589250520209,112.07551537257118,-110.85510170358401,26.72545709512432,85.75099182128906,pair_Vta30__30s__0,train,phone,True,
+pair_Vta30,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,119.53277062856934,25.539569248482604,77.4755129726111,135.7348345160893,27.150997668837434,-116.4084426009446,16.108998775482178,pair_Vta30__60s__0,train,phone,True,
+pair_Vta30,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1210.3453421642282,247.8677143610838,526.1723974369087,1138.632988863724,-1087.7727281376258,-530.708324444549,140.10699462890625,pair_Vta30__120s__0,train,phone,True,
+pair_Vta30,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,666.9088563723939,78.44943817800278,147.8393807790713,604.2563914014557,-463.9802580097371,-479.04840885966166,19.58599853515625,pair_Vta30__180s__0,train,phone,True,
+pair_Vta4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,6.180068485680533,5.058396392963504,1.8368840316217554,5.6876953420030665,-6.179744752457113,0.06320252896970091,8.277008056640625,pair_Vta4__10s__0,train,phone,True,
+pair_Vta4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,115.39354289866303,37.423332206404496,65.04686955170092,113.63602220677498,109.43099163390052,36.61326606487609,10.625,pair_Vta4__30s__0,train,phone,True,
+pair_Vta4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,198.00540808703147,30.43735008401856,54.06628281685528,178.67473685352692,20.709783183934547,196.9206169104754,33.798004150390625,pair_Vta4__60s__0,train,phone,True,
+pair_Vta4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,581.5034097874897,42.80456908171889,158.46776327903387,563.3645479839292,167.29135130520606,556.9306497989392,23.6090087890625,pair_Vta4__120s__0,train,phone,True,
+pair_Vta6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,167.2899676239653,68.19828312393493,124.35048875699829,162.17397169910453,-162.44277107912595,-39.97741779204176,18.5670166015625,pair_Vta6__10s__0,train,phone,True,
+pair_Vta6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,82.47718646884584,16.07004131092598,54.52342050521055,75.83283685954686,-82.24927837412108,-6.1237342374394075,13.49298095703125,pair_Vta6__30s__0,train,phone,True,
+pair_Vta6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,464.3539082090001,42.0499194936931,274.3968518547979,449.7343877249004,-444.2685023486586,-135.07401830881807,17.850006103515625,pair_Vta6__60s__0,train,phone,True,
+pair_Vta7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,38.06528045401365,31.673356610159885,28.969939967928276,39.46902307635618,35.96058528841846,-12.482088780824231,15.74299144744873,pair_Vta7__10s__0,train,phone,True,
+pair_Vta7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,371.39085028083133,71.80674461534046,99.1093384942206,341.6074973316445,-298.5324091924903,-220.92185552133313,32.76199024915695,pair_Vta7__30s__0,train,phone,True,
+pair_Vta7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,118.06597728551398,10.36672850579511,142.85729161601841,219.05877532666986,45.490252200447095,108.95078068843483,83.0989990234375,pair_Vta7__60s__0,train,phone,True,
+pair_Vta8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,25.903067857201673,13.86875414839609,11.336934329243363,24.483947344064582,-15.444431092661187,-20.795154959285334,9.59698486328125,pair_Vta8__10s__0,train,phone,True,
+pair_Vta8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,217.00845339411035,37.672535102596264,108.01392759358922,204.79005470037424,75.63278627880862,-203.3999395489981,26.728973388671875,pair_Vta8__30s__0,train,phone,True,
+pair_Vta8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,279.51111378261925,48.69265816267518,34.572833823933564,226.61961609100265,-126.41065013501371,249.29470294066167,94.16300296783447,pair_Vta8__60s__0,train,phone,True,
+pair_Vta8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1012.101663035887,64.81151439594205,119.05637610007389,867.0832421142691,-919.7270996554819,422.4997279854251,97.38999557495117,pair_Vta8__120s__0,train,phone,True,
+pair_Vta8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1013.3159918356944,86.01938420644997,177.10729085192713,982.7079152604108,-998.8456257277362,-170.60684550974744,9.182001113891602,pair_Vta8__180s__0,train,phone,True,
+pair_Vtb1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,38.12132817308131,15.878389524127549,18.19038762773483,35.34123981492076,-20.72970314359437,31.992394908634957,15.577995300292969,pair_Vtb1__10s__0,train,phone,True,
+pair_Vtb1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,3378.780859214867,964.1653155796638,3577.7750595958023,3624.19059804883,3371.537573384843,218.51716644181363,24.685997009277344,pair_Vtb1__30s__0,train,phone,True,
+pair_Vtb1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,371.69777357211314,50.144535152627356,226.25387140136417,351.46906044321605,-368.4273292681162,49.15793857181731,62.83300495147705,pair_Vtb1__60s__0,train,phone,True,
+pair_Vtb1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,507.47302746849584,29.92832832144785,176.96522703418313,485.02312349124065,263.9863503722178,433.4141909369847,47.9269962310791,pair_Vtb1__120s__0,train,phone,True,
+pair_Vtb1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,206.56397116579103,23.245669323913923,470.19665131208683,574.372318800868,-9.446842297475534,206.34740308294863,1.2320022583007812,pair_Vtb1__180s__0,train,phone,True,
+pair_Vtb11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,54.81747595294199,28.444429835958573,50.351173031566475,54.394457786854375,-54.65242816420259,-4.252115267666589,0.4879913330078125,pair_Vtb11__10s__0,train,phone,True,
+pair_Vtb12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,119.62966895457318,109.08645497682758,49.14360320145454,113.00764952511813,-84.53020854956428,84.65164630580338,71.90300369262695,pair_Vtb12__10s__0,train,phone,True,
+pair_Vtb2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,19.229691312795225,22.0871646189266,5.963263927679707,17.826011389152942,-15.076392751501698,-11.93664149460518,20.38300323486328,pair_Vtb2__10s__0,train,phone,True,
+pair_Vtb2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,183.04885884641672,45.99810554651078,86.13635968452321,167.34250336714763,73.35407499689023,-167.70719677077204,57.7449951171875,pair_Vtb2__30s__0,train,phone,True,
+pair_Vtb2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,580.7306857167624,68.97108757473923,276.9736165576735,563.4986604967464,-276.1283784308757,-510.8713074606847,29.689010620117188,pair_Vtb2__60s__0,train,phone,True,
+pair_Vtb2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,498.7502230895913,86.35334191095387,402.98860105122367,501.84836671543377,-1.9588681874155611,-498.75538219478887,169.9019947052002,pair_Vtb2__120s__0,train,phone,True,
+pair_Vtb2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1952.0309340486988,172.0681190560993,786.7036908804316,1875.12517176133,1128.1520488610759,1592.9509887919307,28.445999145507812,pair_Vtb2__180s__0,train,phone,True,
+pair_Vtb3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,12.73705307834124,258.75360753924616,10.599527004698835,12.524838213761443,-11.390286979270993,-5.700326039615333,154.9339828491211,pair_Vtb3__10s__0,train,phone,True,
+pair_Vtb3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,18.30563862113647,216.8081164169092,15.310006538363961,17.873909500163307,-16.71302412645418,-7.467988416287432,149.57899475097656,pair_Vtb3__30s__0,train,phone,True,
+pair_Vtb3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,50.45646169359263,115.49058353342816,21.49446802403037,47.72910573119592,30.947453906362377,-39.850967061224964,35.262054443359375,pair_Vtb3__60s__0,train,phone,True,
+pair_Vtb3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,109.66754101164,213.07362995334955,70.29654781799965,105.88488315727972,-109.57235513368389,4.556578946826598,173.42799377441406,pair_Vtb3__120s__0,train,phone,True,
+pair_Vtb3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,82.45322162972195,79.28605234052851,33.31388728598331,77.22713394393763,-82.08786441655496,7.752243086877877,173.41100311279297,pair_Vtb3__180s__0,train,phone,True,
+pair_Vtb4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,47.081262248795085,94.59716087957315,17.447129319067358,43.32781018620294,-41.28181271283782,22.63757074261732,89.25201416015625,pair_Vtb4__10s__0,train,phone,True,
+pair_Vtb4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,198.89297037930274,139.56830211053477,81.87593015688846,189.9528459890324,-175.66940326456856,93.26669168421947,111.71800231933594,pair_Vtb4__30s__0,train,phone,True,
+pair_Vtb5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,35.4528925676133,23.80741430867964,20.409589053009725,33.74867144627618,-34.786749403354804,-6.840548286973876,3.4900131225585938,pair_Vtb5__10s__0,train,phone,True,
+pair_Vtb5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,212.19942476679705,74.46416858628092,56.66095443442413,194.6221492609546,-153.37068596082236,-146.64955107199683,49.47900390625,pair_Vtb5__30s__0,train,phone,True,
+pair_Vtb5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,547.0501039506709,39.41225520682861,165.37622467076622,497.57141566546636,-53.92789366220731,544.3946740301964,39.569000244140625,pair_Vtb5__60s__0,train,phone,True,
+pair_Vtb5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,649.0269708595602,22.633042304960902,223.51929158482557,608.5153103424208,207.4817430652378,-614.9651539002978,14.244003295898438,pair_Vtb5__120s__0,train,phone,True,
+pair_Vtb5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,949.3490335292518,27.360128795237266,119.86277504181547,737.1731529984842,916.3616402389035,247.9903959899257,12.671005249023438,pair_Vtb5__180s__0,train,phone,True,
+pair_Vtb6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,17.42985417701172,10.409774138248638,13.133939462935137,16.977951870860288,-13.18779333628748,-11.3965757715011,1.0419921875,pair_Vtb6__10s__0,train,phone,True,
+pair_Vtb7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,38.08552714633151,21.487052873211617,25.53596391862792,36.853439551906774,-37.59855459355739,-6.071255908551862,15.790000915527344,pair_Vtb7__10s__0,train,phone,True,
+pair_Vtb8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,81.83443939817937,44.937556125269786,84.2414349797265,85.65583330772193,-81.38822406981097,-8.536696626098134,0.1869964599609375,pair_Vtb8__10s__0,train,phone,True,
+pair_Vtb8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,19.965070821113954,3.5039762565966006,46.64365187488397,48.89434489588206,-17.982771998647365,-8.67320327188934,0.29999542236328125,pair_Vtb8__30s__0,train,phone,True,
+pair_Vtb9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,121.79873965853109,52.14977773961542,121.60644659555966,130.39846408604143,121.79818911061251,0.09534042233048723,2.50799560546875,pair_Vtb9__10s__0,train,phone,True,
+S-A12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-A12__10s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-A12__30s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-A12__60s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-A12__120s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-A12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-A12__180s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,,,,,,,,S-T6__10s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,,,,,,,,S-T6__30s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,,,,,,,,S-T6__60s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,,,,,,,,S-T6__120s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+S-T6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,,,,,,,,S-T6__180s__0,val,phone,False,unpaired_run: no independent cross-stream ground truth
+pair_S2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,63.569749900595376,55.07782993763558,58.255150460059085,62.523609131932695,-63.4377636377319,4.093461460228362,11.173004150390625,pair_S2__10s__0,val,phone,True,
+pair_S2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,67.3198751633475,19.36796135330554,46.3303344227845,59.86697430146875,-66.63958476027878,-9.547455254129169,50.537994384765625,pair_S2__30s__0,val,phone,True,
+pair_S2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,648.4918100607817,88.8586150105538,236.4347574005553,599.001912318442,-618.3342221689381,195.4091865664996,92.05627059936523,pair_S2__60s__0,val,phone,True,
+pair_S2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,583.2681621438126,64.46758693657098,556.7846905640703,736.6334166444308,576.8928618127593,86.0190832204863,31.15101385116577,pair_S2__120s__0,val,phone,True,
+pair_S2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1265.180527869155,120.86818921394993,527.2116111600815,1179.18205186549,-1265.0858641206246,-16.616754384399556,159.05799102783203,pair_S2__180s__0,val,phone,True,
+pair_Vw1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,1.5555031370774044,,1.4745993353171638,1.5457676269630152,-0.9350002693201137,-1.2431268637545658,30.295013427734375,pair_Vw1__10s__0,val,phone,True,stationary_run: true distance 0.22m < 1.0m threshold
+pair_Vw1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,1.4239100752011398,,1.4718125600271244,1.4989375217664687,-0.9530544003688786,-1.0579258764877588,30.295013427734375,pair_Vw1__30s__0,val,phone,True,stationary_run: true distance 0.75m < 1.0m threshold
+pair_Vw1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,1.4881603159727592,104.39356820340157,1.546156809376323,1.5861014148885557,-0.5935507057446817,-1.3646679067147032,30.295013427734375,pair_Vw1__60s__0,val,phone,True,
+pair_Vw1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,2.14375361059313,74.68293225219172,1.9532533911620633,2.1689800652547873,-0.3912196203357331,-2.1077537796382675,30.295013427734375,pair_Vw1__120s__0,val,phone,True,
+pair_Vw1,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1.8841423174485468,47.57916706352323,1.5827026176023176,1.9510984123205541,-0.756024764530422,-1.7258095039663621,30.295013427734375,pair_Vw1__180s__0,val,phone,True,
+pair_Vw10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,79.00345465292393,64.37522751240546,76.49862688650279,87.45936607972116,-76.63537700164764,-19.198470589425327,17.867996215820312,pair_Vw10__10s__0,val,phone,True,
+pair_Vw10,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,227.99816799725258,58.41367381007675,133.1391967587304,217.81546019104726,-224.72774052928466,38.47326977727183,13.875,pair_Vw10__30s__0,val,phone,True,
+pair_Vw11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,34.112558613228494,27.229377673758968,35.98876989047966,36.206775701297374,33.79314254777359,-4.657400218796292,4.768999099731445,pair_Vw11__10s__0,val,phone,True,
+pair_Vw11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,279.19479021674226,491.70741700393296,124.22975049712065,268.1371033515587,174.36191951688377,218.05807810203083,48.68200397491455,pair_Vw11__30s__0,val,phone,True,
+pair_Vw11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,762.6217795058193,68.60240552114965,207.22712902943948,701.9658652339828,-736.4948443993981,-197.82001618696893,37.28199815750122,pair_Vw11__60s__0,val,phone,True,
+pair_Vw11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,2043.688463880976,98.43085034063895,529.4417957417256,1900.3624057988911,-2017.1518288524564,-327.5635536349247,3.6640052795410156,pair_Vw11__120s__0,val,phone,True,
+pair_Vw11,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1850.8642803720786,176.21853323870292,903.3358401536375,1801.3359483719055,372.8134510968598,1812.8940514932644,51.05199432373047,pair_Vw11__180s__0,val,phone,True,
+pair_Vw12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,108.76470269506464,41.179843784665046,102.06600685379951,108.03859851071145,-108.75428944317895,1.5010877261298283,5.818999290466309,pair_Vw12__10s__0,val,phone,True,
+pair_Vw12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,112.9459779909561,14.39117167740388,93.18972706028127,106.71792508349822,72.67612072659634,86.45858278662531,11.808004379272461,pair_Vw12__30s__0,val,phone,True,
+pair_Vw12,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,303.1558349843046,20.344411400766333,73.87976395179382,273.2924060790157,8.498040898821948,303.0374907989354,22.326000213623047,pair_Vw12__60s__0,val,phone,True,
+pair_Vw14a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,26.408588237715595,9.967605239983039,15.714600671798102,25.26651447262568,-24.310405074300316,-10.315828854954963,2.8679981231689453,pair_Vw14a__10s__0,val,phone,True,
+pair_Vw14a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,59.025232368048634,8.225323334737586,36.45115209941963,55.02239984698884,-53.047050075969125,-25.88383943282519,2.3849945068359375,pair_Vw14a__30s__0,val,phone,True,
+pair_Vw14a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,92.88602504223336,6.1253154007188435,83.55116725218542,130.81620161633887,45.27043399692971,-81.10740430405974,19.031993865966797,pair_Vw14a__60s__0,val,phone,True,
+pair_Vw14a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,349.3520264490879,11.357055815768161,268.11663959380746,405.0074447346402,-236.9363533112996,256.7251751745438,3.2349929809570312,pair_Vw14a__120s__0,val,phone,True,
+pair_Vw14a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,345.32406370103377,7.636172608772855,142.76384831074557,310.21722244406067,-341.6047172171853,50.54618272730511,26.630004405975342,pair_Vw14a__180s__0,val,phone,True,
+pair_Vw14b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,18.195965586211923,7.491652923119559,15.08304537674542,17.325323224113077,9.172374869666749,-15.714993679540287,7.6580047607421875,pair_Vw14b__10s__0,val,phone,True,
+pair_Vw14b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,50.41022090069504,8.003698633646513,41.791111194221784,48.40786664045525,-38.42667179364399,32.62777538259961,10.95699405670166,pair_Vw14b__30s__0,val,phone,True,
+pair_Vw14b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,440.05739294674464,32.91563444297855,121.3058252513522,407.5589161561883,-76.36578760386412,-433.3845554432271,27.157997131347656,pair_Vw14b__60s__0,val,phone,True,
+pair_Vw14b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,509.3326323021141,20.56012767913544,234.19813079793528,443.01575238148547,-428.71556976437193,-274.9800676221228,20.15098524093628,pair_Vw14b__120s__0,val,phone,True,
+pair_Vw14b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1872.5679356009073,37.76640400762253,173.3065706310009,1679.3166438474386,-286.9695390706782,-1850.463323122986,41.558006286621094,pair_Vw14b__180s__0,val,phone,True,
+pair_Vw14c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,41.07445049754899,37.859259420835265,16.88410250946641,37.4032109812895,7.398980740708927,-40.40247705570874,36.384002685546875,pair_Vw14c__10s__0,val,phone,True,
+pair_Vw14c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,117.6813785061818,78.80526739899292,51.4394611849216,112.97995378628978,-48.03422988779091,-107.43195391792882,58.7609977722168,pair_Vw14c__30s__0,val,phone,True,
+pair_Vw14c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,153.15484159063,15.210316737297022,75.08430365115345,121.73225202505091,-152.13847738999533,17.611682711455046,1.2580013275146484,pair_Vw14c__60s__0,val,phone,True,
+pair_Vw14c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,318.4547144408224,65.24998733923267,32.86686782578022,279.9187603854198,-318.43914464911774,3.4662488991591403,15.629547119140625,pair_Vw14c__120s__0,val,phone,True,
+pair_Vw14c,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1142.2708177437978,27.483453671455667,467.1320382561225,1177.679384483256,225.74338826817007,-1119.7938147025277,10.586996078491211,pair_Vw14c__180s__0,val,phone,True,
+pair_Vw15,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,3.529679462919753,,3.4549083075141738,3.523476698262973,0.1667923895457278,3.5257364954496664,114.12000274658203,pair_Vw15__10s__0,val,phone,True,stationary_run: true distance 0.52m < 1.0m threshold
+pair_Vw15,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,4.452746681289612,204.61612465480346,3.7810009260736095,4.391426219161471,-1.011873833229116,4.336249583204837,114.12000274658203,pair_Vw15__30s__0,val,phone,True,
+pair_Vw15,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,5.926224169624981,131.97680967803413,4.539579183367619,5.770697944930603,-2.3573324447596002,5.437196184459764,114.12000274658203,pair_Vw15__60s__0,val,phone,True,
+pair_Vw16a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,81.67242300336362,65.16325220351973,81.3671001938784,82.42489990709427,-81.65513715487566,1.6920379568762343,1.6669998168945312,pair_Vw16a__10s__0,val,phone,True,
+pair_Vw16a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,275.37720739168685,98.88663404378791,50.592742393387226,252.07820600934852,-275.04893783138806,-13.500679185780143,39.33500671386719,pair_Vw16a__30s__0,val,phone,True,
+pair_Vw16a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,30.892191792936256,4.636058091417026,19.1007460082638,28.703781022603582,-30.209120555624796,-6.460563162167206,2.1699981689453125,pair_Vw16a__60s__0,val,phone,True,
+pair_Vw16a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,1114.6104352300454,98.01101700532266,486.35145907514783,1040.6943386277087,-1113.9463131172804,-39.78379029405164,39.93500518798828,pair_Vw16a__120s__0,val,phone,True,
+pair_Vw16a,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,459.6647746988246,13.719276684394908,270.5778951434862,612.9887706961849,396.7967028426132,232.03918476708844,14.031013488769531,pair_Vw16a__180s__0,val,phone,True,
+pair_Vw16b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,103.3057276560296,44.93233575800936,102.89861761971017,103.13016979875229,-103.14646878710457,5.740559441683466,0.12099456787109375,pair_Vw16b__10s__0,val,phone,True,
+pair_Vw16b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,49.71663072395711,7.621474006700763,86.426618166411,89.85061616512928,-48.91972584484787,8.866237262052795,0.09999847412109375,pair_Vw16b__30s__0,val,phone,True,
+pair_Vw16b,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,324.0428814554755,32.85217322941986,73.08751095337529,298.5400943988364,323.96264928107786,-7.029093946622282,3.89300537109375,pair_Vw16b__60s__0,val,phone,True,
+pair_Vw17,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,35.78857457967896,20.889928888834806,47.04535895824596,54.43351530783999,-35.480873875931266,4.683193345574654,0.4099884033203125,pair_Vw17__10s__0,val,phone,True,
+pair_Vw2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,16.551181033586595,7.606841816516763,16.420928674952386,18.040151207258642,16.340312843062076,2.6335189803656815,0.28200531005859375,pair_Vw2__10s__0,val,phone,True,
+pair_Vw2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,234.99181139770394,47.58037163989451,114.06476992262294,222.79082785659165,-224.96926181354507,67.90425308421551,16.89300537109375,pair_Vw2__30s__0,val,phone,True,
+pair_Vw2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,825.2481492695472,59.74344429485551,318.97400520881905,773.1452045337228,-810.4005087129134,-155.84101928285688,1.2659759521484375,pair_Vw2__60s__0,val,phone,True,
+pair_Vw2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,452.17749082803135,16.898821837768647,122.6626301092015,415.8002261980634,-63.270721944683714,447.7246146618525,16.295997619628906,pair_Vw2__120s__0,val,phone,True,
+pair_Vw2,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,256.5737781533522,18.45696253326792,295.22393435251615,486.8326316088344,36.24649367006586,-254.00015139169838,144.72200775146484,pair_Vw2__180s__0,val,phone,True,
+pair_Vw3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,12.32018242254245,7.353629830500247,10.081311852960166,12.370984596709631,-1.9661984695761205,-12.162281160872865,9.73699951171875,pair_Vw3__10s__0,val,phone,True,
+pair_Vw3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,102.99165758055152,22.87895527121148,62.37699534056833,95.82375744780312,64.10880347004371,80.60627386321244,16.64599609375,pair_Vw3__30s__0,val,phone,True,
+pair_Vw3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,299.8052149298328,33.48857194202635,227.1236466132214,290.1180227119936,137.30813113553907,-266.5133764625559,18.25299072265625,pair_Vw3__60s__0,val,phone,True,
+pair_Vw3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,2215.082831088475,134.31585943595454,1156.6778212252248,2099.8360772650626,-1299.7777460551913,1793.6270826129758,148.7889862060547,pair_Vw3__120s__0,val,phone,True,
+pair_Vw3,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,2904.737839629341,117.79712205799495,1122.780763759558,2761.2296683037753,-942.1064470030697,2747.4374101299645,133.60999298095703,pair_Vw3__180s__0,val,phone,True,
+pair_Vw4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,27.114484547597982,65.12194557323329,6.794679565644804,22.5620697818838,-26.9942669355044,2.5506340661509608,171.3909912109375,pair_Vw4__10s__0,val,phone,True,
+pair_Vw4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,57.73605835268095,11.837727096076767,63.92703747586714,69.29188314364129,-30.84714403924538,-48.804885274473406,16.896995544433594,pair_Vw4__30s__0,val,phone,True,
+pair_Vw4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,717.0473366297238,46.48215097450263,210.41404560952802,648.32539966755,-167.80857196614664,697.1536507839949,47.88671875,pair_Vw4__60s__0,val,phone,True,
+pair_Vw4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,416.9401506631716,14.987576742936614,170.33667988425282,411.6218150076407,229.99828001455145,347.7674115818539,3.930023193359375,pair_Vw4__120s__0,val,phone,True,
+pair_Vw4,2026-09-07T17:56:09Z,baseline_cv_heading_v1,180,1835.9311813135514,33.79492737151473,1104.573485201362,1977.62709583248,1161.850261436377,1421.6732613526144,20.53802490234375,pair_Vw4__180s__0,val,phone,True,
+pair_Vw5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,12.886492334976776,23.92258142512025,5.994091902660854,11.011702389250816,-12.632695257748498,-2.544917636560455,42.22601318359375,pair_Vw5__10s__0,val,phone,True,
+pair_Vw5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,192.1407049199364,101.71757510927024,48.68233232085831,177.32782410093424,-165.75693407949123,-97.17177159142949,110.54001832008362,pair_Vw5__30s__0,val,phone,True,
+pair_Vw5,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,258.28717822752225,72.03489014164896,37.3205272330412,216.56322862350123,-256.0961631557695,-33.570352986270045,154.260009765625,pair_Vw5__60s__0,val,phone,True,
+pair_Vw6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,56.43565043278384,69.70074705500487,45.830413810798305,52.91646164296015,-56.076304856385306,6.358409370490301,85.29501342773438,pair_Vw6__10s__0,val,phone,True,
+pair_Vw6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,357.94842251378446,134.4729019789394,161.81548027569443,339.6268304898655,-317.78251266964037,164.75371490987348,104.08700561523438,pair_Vw6__30s__0,val,phone,True,
+pair_Vw6,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,495.6578243435598,95.61079943033826,168.14581132953543,448.32389835513743,-367.24594880964617,-332.8816034746619,164.78599548339844,pair_Vw6__60s__0,val,phone,True,
+pair_Vw7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,83.49582666322758,105.08613360418751,58.43784975117161,83.11527399491268,-83.49032533123425,0.9683747147159565,1.032012939453125,pair_Vw7__10s__0,val,phone,True,
+pair_Vw7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,201.83216604153378,109.17265640176137,76.6599202776431,187.06920237466935,-134.53354503849866,-150.45368861774645,85.38467407226562,pair_Vw7__30s__0,val,phone,True,
+pair_Vw7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,489.2464543823519,114.01114257344962,100.88328727656307,445.8462094046345,-344.0074665800577,347.8678689692466,144.05299377441406,pair_Vw7__60s__0,val,phone,True,
+pair_Vw7,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,946.5872823506986,113.58332466211667,221.3737807882872,855.0693548119689,-914.8588723986802,-242.99126795054923,168.51799774169922,pair_Vw7__120s__0,val,phone,True,
+pair_Vw8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,45.31357728467256,98.36530720422675,8.281080901958763,40.895776617966774,-44.8215383375646,-6.659578333557528,89.114013671875,pair_Vw8__10s__0,val,phone,True,
+pair_Vw8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,30,262.3741644557954,114.6167157873496,158.8990282117153,250.1091809419861,-201.95336919542876,167.50058180392074,177.10699462890625,pair_Vw8__30s__0,val,phone,True,
+pair_Vw8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,60,261.16440786774626,74.71525894058959,138.42906603472116,254.77224042788347,-194.49493663037413,174.29231526496488,142.49799346923828,pair_Vw8__60s__0,val,phone,True,
+pair_Vw8,2026-09-07T17:56:09Z,baseline_cv_heading_v1,120,960.2692552180633,119.97814238872589,482.8117016050578,891.9920753722272,-127.09411185874094,951.8153442426092,85.53079223632812,pair_Vw8__120s__0,val,phone,True,
+pair_Vw9,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,26.342891551097086,32.6253125105873,14.783518851747356,24.28239085082512,-22.985460056227183,12.869233381817304,26.302993774414062,pair_Vw9__10s__0,val,phone,True,
