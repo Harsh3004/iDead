@@ -12,6 +12,8 @@ dependencies = [
     "numpy",
     "pandas",
     "pyarrow",
+    "scipy",
+    "matplotlib",
 ]
 
 [tool.setuptools.package-dir]
