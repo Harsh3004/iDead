@@ -1,0 +1,3 @@
+run_id,timestamp,config,outage_s,final_pos_error_m,pct_of_distance,cep50_m,cep95_m,along_track_m,cross_track_m,heading_error_deg,outage_id,split,source_side,has_ground_truth,skip_reason
+pair_Vfa01,2026-09-07T17:56:09Z,baseline_cv_heading_v1,10,32.784932853572,27.40630356079169,10.052633713979226,30.115978475031472,-0.8469166573589195,32.773969386034835,24.49499893188477,pair_Vfa01__10s__0,test,phone,True,
+pair_Vfa01,2026-09-08T15:17:10Z,baseline_cpp_strapdown_v1,10,127.90073035585196,106.9175970997157,16.27735164694065,113.05841071876796,119.56662446191312,45.414980122951846,30.80029954223633,pair_Vfa01__10s__0,test,phone,True,

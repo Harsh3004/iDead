@@ -7,8 +7,8 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-and-test:
-    name: Build Core & Test Pipeline
+  cpp-build-and-test:
+    name: C++17 Core Engine (CMake & CTest)
     runs-on: ubuntu-latest
 
     steps:
@@ -23,25 +23,43 @@ jobs:
         with:
           cmake-version: '3.28.x'
 
-      - name: Configure CMake (C++17 Core)
+      - name: Configure CMake
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build C++ Core and Tests
+      - name: Build Core Engine & Tests
         run: cmake --build build
 
-      - name: Run C++ Unit Tests
+      - name: Run CTest Test Suites
         run: ctest --test-dir build --output-on-failure
+
+  python-test-pipeline:
+    name: Python Dataeval & Fixture Pipeline (3.11)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
-      - name: Install Dataeval Package
+      - name: Install Dependencies & Dataeval
         run: |
           python -m pip install --upgrade pip
           pip install -e ./dataeval
 
-      - name: Run Python Dataeval Smoke Test
+      - name: Run Full Test Suite (64 unit & integration tests)
         run: |
-          python -c "import dataeval; import dataeval.ingest; import dataeval.harness; import dataeval.training; print('All dataeval packages successfully imported')"
+          python -m unittest discover -s dataeval/tests -p "test_*.py" -v
+
+      - name: Verify Diagnostic Plot Generation on Fixture Data
+        run: |
+          python -m dataeval.harness.make_plots \
+            --leaderboard-csv dataeval/tests/fixtures/results/leaderboard.csv \
+            --summary-csv dataeval/tests/fixtures/results/leaderboard_summary.csv \
+            --outages-dir dataeval/tests/fixtures/processed/outages \
+            --prediction-dir dataeval/tests/fixtures/processed/cpp_predictions \
+            --plots-dir /tmp/ci_plots

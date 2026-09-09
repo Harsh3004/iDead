@@ -1,0 +1,3 @@
+outage_id,run_or_pair_id,split,source_side,outage_s,start_s,end_s,overlaps_real_gap,has_cross_stream_ground_truth,status,skip_reason
+pair_Vfa01__10s__0,pair_Vfa01,test,phone,10,1107.5,1117.5,False,True,ok,
+pair_Y1__180s__0,pair_Y1,test,phone,180,519.2,699.2,False,True,ok,

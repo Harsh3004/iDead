@@ -113,37 +113,45 @@ def plot_error_vs_outage_duration(
         pad=14,
     )
 
-    # Annotate ratio at endpoints
-    med_10_cv = cv_df[cv_df["outage_s"] == 10]["median_final_pos_error_m"].iloc[0]
-    med_10_cpp = cpp_df[cpp_df["outage_s"] == 10]["median_final_pos_error_m"].iloc[0]
-    ax.annotate(
-        f"10s: 2.6×\n({med_10_cpp:.0f}m vs {med_10_cv:.0f}m)",
-        xy=(10, med_10_cpp),
-        xytext=(15, med_10_cpp * 1.5),
-        arrowprops=dict(arrowstyle="->", color="#555555", lw=0.8),
-        fontsize=8.5,
-        fontweight="semibold",
-        color="#333333",
-        bbox=dict(boxstyle="round,pad=0.3", fc="#f9f9f9", ec="#cccccc", lw=0.6),
-    )
+    # Annotate ratio at endpoints if available
+    sub_10_cv = cv_df[cv_df["outage_s"] == 10]
+    sub_10_cpp = cpp_df[cpp_df["outage_s"] == 10]
+    if not sub_10_cv.empty and not sub_10_cpp.empty:
+        med_10_cv = sub_10_cv["median_final_pos_error_m"].iloc[0]
+        med_10_cpp = sub_10_cpp["median_final_pos_error_m"].iloc[0]
+        ratio_10 = med_10_cpp / med_10_cv if med_10_cv > 0 else 1.0
+        ax.annotate(
+            f"10s: {ratio_10:.1f}×\n({med_10_cpp:.0f}m vs {med_10_cv:.0f}m)",
+            xy=(10, med_10_cpp),
+            xytext=(15, med_10_cpp * 1.5),
+            arrowprops=dict(arrowstyle="->", color="#555555", lw=0.8),
+            fontsize=8.5,
+            fontweight="semibold",
+            color="#333333",
+            bbox=dict(boxstyle="round,pad=0.3", fc="#f9f9f9", ec="#cccccc", lw=0.6),
+        )
 
-    med_180_cv = cv_df[cv_df["outage_s"] == 180]["median_final_pos_error_m"].iloc[0]
-    med_180_cpp = cpp_df[cpp_df["outage_s"] == 180]["median_final_pos_error_m"].iloc[0]
-    ax.annotate(
-        f"180s: 42.0×\n({med_180_cpp / 1000:.1f} km vs {med_180_cv / 1000:.1f} km)",
-        xy=(180, med_180_cpp),
-        xytext=(130, med_180_cpp * 0.9),
-        arrowprops=dict(arrowstyle="->", color="#555555", lw=0.8),
-        fontsize=8.5,
-        fontweight="semibold",
-        color="#333333",
-        bbox=dict(boxstyle="round,pad=0.3", fc="#f9f9f9", ec="#cccccc", lw=0.6),
-    )
+    sub_180_cv = cv_df[cv_df["outage_s"] == 180]
+    sub_180_cpp = cpp_df[cpp_df["outage_s"] == 180]
+    if not sub_180_cv.empty and not sub_180_cpp.empty:
+        med_180_cv = sub_180_cv["median_final_pos_error_m"].iloc[0]
+        med_180_cpp = sub_180_cpp["median_final_pos_error_m"].iloc[0]
+        ratio_180 = med_180_cpp / med_180_cv if med_180_cv > 0 else 1.0
+        ax.annotate(
+            f"180s: {ratio_180:.1f}×\n({med_180_cpp / 1000:.1f} km vs {med_180_cv / 1000:.1f} km)",
+            xy=(180, med_180_cpp),
+            xytext=(130, med_180_cpp * 0.9),
+            arrowprops=dict(arrowstyle="->", color="#555555", lw=0.8),
+            fontsize=8.5,
+            fontweight="semibold",
+            color="#333333",
+            bbox=dict(boxstyle="round,pad=0.3", fc="#f9f9f9", ec="#cccccc", lw=0.6),
+        )
 
     ax.grid(True, which="both", linestyle=":", alpha=0.5, color="#888888")
     ax.legend(frameon=True, facecolor="#ffffff", edgecolor="#cccccc", fontsize=9.5, loc="upper left")
 
-    plt.tight_layout()
+    plt.tight_layout(pad=1.5)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=300)
     plt.close(fig)
@@ -159,19 +167,24 @@ def plot_error_ratio_bar(
     cv_df = summary_df[summary_df["config"] == "baseline_cv_heading_v1"].set_index("outage_s")
     cpp_df = summary_df[summary_df["config"] == "baseline_cpp_strapdown_v1"].set_index("outage_s")
 
-    durations = [10, 30, 60, 120, 180]
+    available_durations = [d for d in [10, 30, 60, 120, 180] if d in cv_df.index and d in cpp_df.index]
+    if not available_durations:
+        plt.close(fig)
+        return
+
     ratios = []
     labels = []
 
-    for d in durations:
+    for d in available_durations:
         cv_med = cv_df.loc[d, "median_final_pos_error_m"]
         cpp_med = cpp_df.loc[d, "median_final_pos_error_m"]
-        ratio = cpp_med / cv_med
+        ratio = cpp_med / cv_med if cv_med > 0 else 1.0
         ratios.append(ratio)
         labels.append(f"{d}s\n(N={int(cv_df.loc[d, 'n_paired'])})")
 
-    x = np.arange(len(durations))
-    colors = ["#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#990000"]
+    x = np.arange(len(available_durations))
+    base_colors = ["#fdbb84", "#fc8d59", "#ef6548", "#d7301f", "#990000"]
+    colors = base_colors[:len(available_durations)]
 
     bars = ax.bar(x, ratios, width=0.55, color=colors, edgecolor="#444444", linewidth=0.8)
 
@@ -190,7 +203,7 @@ def plot_error_ratio_bar(
     ax.axhline(1.0, color="#333333", linestyle="--", linewidth=1.0, alpha=0.7, label="1.0× Parity Line")
 
     # Add numeric callouts on each bar
-    for bar, ratio, d in zip(bars, ratios, durations):
+    for bar, ratio, d in zip(bars, ratios, available_durations):
         height = bar.get_height()
         cv_val = cv_df.loc[d, "median_final_pos_error_m"]
         cpp_val = cpp_df.loc[d, "median_final_pos_error_m"]
@@ -245,8 +258,17 @@ def plot_sample_trajectories(
     fig, axes = plt.subplots(1, 2, figsize=(13.0, 6.0), dpi=300)
 
     for idx, (ax, oid) in enumerate(zip(axes, instances)):
-        row = manifest[manifest["outage_id"] == oid].iloc[0]
+        matching = manifest[manifest["outage_id"] == oid]
+        if matching.empty:
+            ax.set_title(f"Instance {oid} not found in manifest", fontsize=10)
+            continue
+        row = matching.iloc[0]
         parquet_p = outages_dir / row["split"] / f"{oid}.parquet"
+        pred_p = prediction_dir / f"{oid}.csv"
+        if not parquet_p.exists() or not pred_p.exists():
+            ax.set_title(f"Files for {oid} not found on disk", fontsize=10)
+            continue
+
         df = pd.read_parquet(parquet_p)
 
         window = OutageWindow(
@@ -258,7 +280,11 @@ def plot_sample_trajectories(
         )
 
         gt_df = ground_truth_trajectory(df, window)
-        cpp_df = load_cpp_prediction(prediction_dir / f"{oid}.csv")
+        if gt_df is None or len(gt_df) < 2:
+            ax.set_title(f"No ground truth trajectory for {oid}", fontsize=10)
+            continue
+
+        cpp_df = load_cpp_prediction(pred_p)
         pre_state = extract_pre_outage_state(df, window)
         cv_df = propagate_constant_velocity_heading(pre_state, gt_df["timestamp_s"].values)
 

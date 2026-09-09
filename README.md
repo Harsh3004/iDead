@@ -1,6 +1,6 @@
 # Phone-Based Inertial Dead-Reckoning (IDR) Navigation Stack
 
-[![CI](https://github.com/your-org/idr-project/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/idr-project/actions)
+[![CI](https://github.com/Harsh3004/iDead/actions/workflows/ci.yml/badge.svg)](https://github.com/Harsh3004/iDead/actions)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-green.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -152,8 +152,10 @@ idr-project/
 │   │   ├── split.py                      # Leakage-safe 41-group partitioning logic
 │   │   ├── summary.py                    # Grouped aggregate metrics summarizer
 │   │   └── sync.py                       # GPS Doppler cross-correlation & interpolation engine
-│   └── tests/                            # Python automated test suite (58 unit tests)
+│   └── tests/                            # Python automated test suite (64 unit & integration tests)
+│       ├── fixtures/                     # Checked-in lightweight fixture slices (< 150 KB) for CI
 │       ├── test_baseline.py              # Tests for CV baseline state extraction and propagation
+│       ├── test_ci_pipeline.py           # End-to-end integration tests on checked-in fixtures
 │       ├── test_cpp_predictions.py       # Tests for C++ trajectory prediction loading and validation
 │       ├── test_metrics.py               # Tests for Haversine, CEP, along/cross track, heading error
 │       ├── test_outage.py                # Tests for deterministic window placement and real-gap avoidance
@@ -292,8 +294,8 @@ The dead-reckoning benchmark compares two navigation models across **377 outage 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/idr-project.git
-cd idr-project
+git clone https://github.com/Harsh3004/iDead.git
+cd iDead
 
 # Configure CMake build directory
 cmake -B build
@@ -313,8 +315,8 @@ ctest --test-dir build --output-on-failure
 # Install dataeval in editable mode
 pip install -e ./dataeval
 
-# Verify installation with unit test execution (58 tests)
-python -m unittest discover -s dataeval/tests
+# Verify installation with unit test execution (64 tests)
+python -m unittest discover -s dataeval/tests -p "test_*.py"
 ```
 
 ---
@@ -383,18 +385,18 @@ python -m dataeval.harness.make_plots \
 
 ## Automated Testing & CI
 
-Continuous Integration is configured via GitHub Actions (`.github/workflows/ci.yml`), validating on every pull request and commit to `master`:
-- Clean C++17 build under GCC/Clang/MSVC.
-- Execution of all C++ unit tests (`idr_tests`, `idr_strapdown_tests`).
-- Python package installation and full execution of the 58-test suite in `dataeval/tests/`.
+Continuous Integration is configured via GitHub Actions (`.github/workflows/ci.yml`), running automatically on every push and pull request to `main`:
+- **C++17 Core Engine (`cpp-build-and-test`)**: Clean release build with CMake 3.28 + Ninja on Ubuntu Linux, executing all CTest suites (`idr_core_tests`, `idr_strapdown_tests`).
+- **Python Dataeval Pipeline (`python-test-pipeline`)**: Clean installation of `dataeval` under Python 3.11, running all 64 unit and integration tests against checked-in lightweight fixtures (< 150 KB).
+- **Intentionally Excluded from CI**: Ingestion of the full 1.71 GB IO-VNBD dataset, replay of all 377 instances, and full leaderboard scoring (these remain reproducible locally via Steps 1–11).
 
 ### Running All Tests Locally:
 ```bash
 # Run C++ tests
 ctest --test-dir build --output-on-failure
 
-# Run Python tests
-python -m unittest discover -s dataeval/tests
+# Run Python unit & integration tests (64 tests)
+python -m unittest discover -s dataeval/tests -p "test_*.py"
 ```
 
 ---
@@ -408,6 +410,7 @@ Key architectural and scientific decisions are documented under `docs/decisions/
 - [ADR 0004: Paired CAN and Smartphone Time Synchronization and Common Grid Alignment](docs/decisions/0004-paired-sync-alignment.md)
 - [ADR 0004: Dataset Grouping Key and Leakage-Safe Train/Val/Test Partitioning](docs/decisions/0004-split-grouping-key.md)
 - [ADR 0005: Intermediate Replay Cache Strategy for C++ Driver on Windows](docs/decisions/0005-cpp-parquet-io.md)
+- [ADR 0006: Lightweight CI Fixture Strategy and Test Isolation](docs/decisions/0006-ci-fixture-strategy.md)
 
 ---
 

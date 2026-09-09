@@ -1,0 +1,3 @@
+config,outage_s,n_paired,median_final_pos_error_m,p95_final_pos_error_m,median_pct_of_distance,p95_pct_of_distance,median_heading_error_deg
+baseline_cpp_strapdown_v1,10,1,127.9007,127.9007,106.9176,106.9176,30.8003
+baseline_cv_heading_v1,10,1,32.7849,32.7849,27.4063,27.4063,24.4950

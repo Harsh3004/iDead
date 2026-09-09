@@ -38,7 +38,7 @@ endif()
 # Unit tests
 include(CTest)
 if(BUILD_TESTING)
-    option(IDR_USE_FETCHED_GTEST "Fetch and link GoogleTest" ON)
+    option(IDR_USE_FETCHED_GTEST "Fetch and link GoogleTest" OFF)
 
     # Legacy MinGW 32-bit compilers (< GCC 8) lack C++11 std::mutex / threading support.
     # On those toolchains, use the zero-dependency test runner so builds succeed locally.
