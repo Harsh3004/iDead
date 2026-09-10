@@ -1,6 +1,7 @@
 """Unit and integration tests for Module A static-phase attitude initialization."""
 
 from pathlib import Path
+from typing import Tuple
 import unittest
 import numpy as np
 import pandas as pd
