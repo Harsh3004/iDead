@@ -46,6 +46,31 @@ public:
     ) noexcept;
 
     /**
+     * @brief Initialize navigation state with an explicit attitude quaternion and constant gyro bias.
+     *
+     * @param t0 Timestamp of initialization (seconds).
+     * @param lat0 Initial WGS-84 latitude (degrees).
+     * @param lon0 Initial WGS-84 longitude (degrees).
+     * @param alt0 Initial altitude (meters).
+     * @param speed_ms Initial scalar speed (m/s).
+     * @param heading_deg Initial heading in degrees clockwise from North [0.0, 360.0).
+     * @param q0 Initial attitude quaternion (incorporating leveling and heading).
+     * @param gyro_bias Estimated constant gyro bias vector in body frame (rad/s).
+     * @param initial_accel Initial body-frame accelerometer reading for gravity decoupling.
+     */
+    void initializeWithAttitude(
+        double t0,
+        double lat0,
+        double lon0,
+        double alt0,
+        double speed_ms,
+        double heading_deg,
+        const Quaternion& q0,
+        const Vector3d& gyro_bias = Vector3d(0.0, 0.0, 0.0),
+        const Vector3d& initial_accel = Vector3d(0.0, 0.0, kGravity)
+    ) noexcept;
+
+    /**
      * @brief Integrate one incoming IMU sample forward in time.
      *
      * @param imu ImuSample containing timestamp, ax/ay/az (m/s^2), gx/gy/gz (rad/s).
@@ -72,6 +97,7 @@ public:
     const Vector3d& getVelocityEnu() const noexcept { return v_; }
     const Quaternion& getAttitude() const noexcept { return q_; }
     const Vector3d& getAccelerationEnu() const noexcept { return last_accel_nav_; }
+    const Vector3d& getGyroBias() const noexcept { return gyro_bias_; }
 
 private:
     bool       initialized_{false};
@@ -80,6 +106,7 @@ private:
     Vector3d   v_{0.0, 0.0, 0.0};          // Velocity in ENU (East, North, Up) [m/s]
     Vector3d   p_{0.0, 0.0, 0.0};          // Position displacement in local ENU [m]
     Vector3d   last_accel_nav_{0.0, 0.0, 0.0}; // Kinematic acceleration in ENU [m/s^2]
+    Vector3d   gyro_bias_{0.0, 0.0, 0.0};  // Constant body gyro bias to subtract (rad/s)
 
     double     lat0_{0.0};                 // Reference origin latitude (degrees)
     double     lon0_{0.0};                 // Reference origin longitude (degrees)

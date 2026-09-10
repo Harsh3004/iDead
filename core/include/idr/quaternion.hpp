@@ -81,6 +81,23 @@ struct Quaternion {
         return q_yaw;
     }
 
+    /**
+     * @brief Construct attitude from Euler angles in ENU (yaw clockwise from North, pitch, roll in radians).
+     */
+    static Quaternion fromEulerEnu(double yaw_deg, double pitch_rad, double roll_rad) noexcept {
+        constexpr double kDegToRad = 3.14159265358979323846 / 180.0;
+        const double half_yaw = 0.5 * yaw_deg * kDegToRad;
+        const Quaternion q_yaw(std::cos(half_yaw), 0.0, 0.0, -std::sin(half_yaw));
+
+        const double half_pitch = 0.5 * pitch_rad;
+        const Quaternion q_pitch(std::cos(half_pitch), std::sin(half_pitch), 0.0, 0.0);
+
+        const double half_roll = 0.5 * roll_rad;
+        const Quaternion q_roll(std::cos(half_roll), 0.0, std::sin(half_roll), 0.0);
+
+        return (q_yaw * q_pitch * q_roll).normalized();
+    }
+
     double normSq() const noexcept {
         return w * w + x * x + y * y + z * z;
     }

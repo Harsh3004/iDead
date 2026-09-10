@@ -195,6 +195,87 @@ void testGyroBiasErrorCharacterization() {
     std::cout << "  [PASS] testGyroBiasErrorCharacterization succeeded.\n";
 }
 
+void testAttitudeAndBiasInjection() {
+    std::cout << "[RUN] testAttitudeAndBiasInjection...\n";
+
+    // 1. Verify gyro bias cancellation:
+    // With gyro bias injected, a matching constant gyro measurement should be completely cancelled,
+    // preventing the cubic position error blowup seen in testGyroBiasErrorCharacterization.
+    const double gyro_bias_pitch = 0.001; // rad/s
+    const double speed = 15.0;            // m/s
+    const double duration = 60.0;         // 60s outage
+
+    idr::StrapdownIns ins;
+    const idr::Vector3d initial_accel(0.0, 0.0, idr::StrapdownIns::kGravity);
+    const idr::Quaternion q0 = idr::Quaternion::fromHeadingEnu(0.0);
+    const idr::Vector3d bias(gyro_bias_pitch, 0.0, 0.0);
+
+    ins.initializeWithAttitude(0.0, 0.0, 0.0, 0.0, speed, 0.0, q0, bias, initial_accel);
+    assert(ins.isInitialized());
+    assert(std::abs(ins.getGyroBias().x - gyro_bias_pitch) < 1e-12);
+
+    const double dt = 0.05;
+    const int steps = static_cast<int>(std::round(duration / dt));
+    double t = 0.0;
+
+    for (int i = 1; i <= steps; ++i) {
+        t += dt;
+        idr::ImuSample sample{
+            t,
+            0.0, 0.0, idr::StrapdownIns::kGravity,
+            gyro_bias_pitch, 0.0, 0.0, // IMU measures bias
+            0.0, 0.0, 0.0
+        };
+        ins.update(sample);
+    }
+
+    const double true_north = speed * duration;
+    const idr::Vector3d actual_pos = ins.getPositionEnu();
+    const double err = std::sqrt(
+        actual_pos.x * actual_pos.x +
+        (actual_pos.y - true_north) * (actual_pos.y - true_north)
+    );
+
+    std::cout << "  60s Position Error with bias cancellation: " << err << " m\n";
+    // Without bias cancellation, 60s error was > 100 meters. With cancellation, it must be < 0.01m
+    assert(err < 0.01);
+
+    // 2. Verify pitch/roll leveling cancellation:
+    // A tilted vehicle on an incline (pitch = 3 deg) has specific force rotated in body frame:
+    // f_body = [0, -g * sin(pitch), g * cos(pitch)]
+    const double pitch_rad = 3.0 * (kPi / 180.0);
+    const double roll_rad = -2.0 * (kPi / 180.0);
+    const double heading_deg = 45.0;
+
+    const idr::Quaternion q_tilted = idr::Quaternion::fromEulerEnu(heading_deg, pitch_rad, roll_rad);
+    // In still conditions, specific force in ENU is [0, 0, g]. Body accelerometer reads R^T * [0, 0, g]:
+    const idr::Vector3d f_body = q_tilted.conjugate().rotate(idr::Vector3d(0.0, 0.0, idr::StrapdownIns::kGravity));
+
+    idr::StrapdownIns ins_tilted;
+    ins_tilted.initializeWithAttitude(0.0, 0.0, 0.0, 0.0, 0.0, heading_deg, q_tilted, idr::Vector3d(0.0, 0.0, 0.0), f_body);
+
+    // Initial kinematic acceleration must be 0
+    const idr::Vector3d init_accel_enu = ins_tilted.getAccelerationEnu();
+    assert(init_accel_enu.norm() < 1e-6);
+
+    // Update 5 seconds at rest
+    for (int i = 1; i <= 100; ++i) {
+        idr::ImuSample sample{
+            0.05 * i,
+            f_body.x, f_body.y, f_body.z,
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0
+        };
+        ins_tilted.update(sample);
+    }
+
+    const idr::Vector3d tilted_pos = ins_tilted.getPositionEnu();
+    std::cout << "  5s Stationary drift on incline: " << tilted_pos.norm() << " m\n";
+    assert(tilted_pos.norm() < 1e-6);
+
+    std::cout << "  [PASS] testAttitudeAndBiasInjection succeeded.\n";
+}
+
 } // namespace
 
 int main() {
@@ -205,6 +286,7 @@ int main() {
     testStraightLineConstantVelocity();
     testCircularArcTurn();
     testGyroBiasErrorCharacterization();
+    testAttitudeAndBiasInjection();
 
     std::cout << "========================================\n";
     std::cout << " [ALL PASSED] All Strapdown INS tests passed!\n";

@@ -12,13 +12,33 @@ void StrapdownIns::initialize(
     double heading_deg,
     const Vector3d& initial_accel
 ) noexcept {
+    initializeWithAttitude(
+        t0, lat0, lon0, alt0, speed_ms, heading_deg,
+        Quaternion::fromHeadingEnu(heading_deg),
+        Vector3d(0.0, 0.0, 0.0),
+        initial_accel
+    );
+}
+
+void StrapdownIns::initializeWithAttitude(
+    double t0,
+    double lat0,
+    double lon0,
+    double alt0,
+    double speed_ms,
+    double heading_deg,
+    const Quaternion& q0,
+    const Vector3d& gyro_bias,
+    const Vector3d& initial_accel
+) noexcept {
     t_ = t0;
     lat0_ = lat0;
     lon0_ = lon0;
     alt0_ = alt0;
 
-    // Initial attitude from GNSS heading in ENU
-    q_ = Quaternion::fromHeadingEnu(heading_deg);
+    // Use explicit attitude quaternion (already normalized)
+    q_ = q0.normalized();
+    gyro_bias_ = gyro_bias;
 
     // Initial velocity along initial heading in ENU
     constexpr double kDegToRad = 3.14159265358979323846 / 180.0;
@@ -32,7 +52,7 @@ void StrapdownIns::initialize(
     // Initial position in local ENU is origin (0, 0, 0)
     p_ = Vector3d(0.0, 0.0, 0.0);
 
-    // Initial kinematic acceleration
+    // Initial kinematic acceleration with gravity decoupling
     const Vector3d gravity_nav(0.0, 0.0, -kGravity);
     last_accel_nav_ = q_.rotate(initial_accel) + gravity_nav;
 
@@ -51,8 +71,12 @@ void StrapdownIns::update(const ImuSample& imu) noexcept {
         return;
     }
 
-    // 1. Attitude Propagation via quaternion rotation vector
-    const Vector3d omega_body(imu.gx, imu.gy, imu.gz);
+    // 1. Attitude Propagation via quaternion rotation vector (subtracting gyro bias)
+    const Vector3d omega_body(
+        imu.gx - gyro_bias_.x,
+        imu.gy - gyro_bias_.y,
+        imu.gz - gyro_bias_.z
+    );
     q_ = q_.propagate(omega_body, dt);
 
     // 2. Specific Force Resolution into ENU Navigation Frame
@@ -84,6 +108,7 @@ void StrapdownIns::reset() noexcept {
     v_ = Vector3d(0.0, 0.0, 0.0);
     p_ = Vector3d(0.0, 0.0, 0.0);
     last_accel_nav_ = Vector3d(0.0, 0.0, 0.0);
+    gyro_bias_ = Vector3d(0.0, 0.0, 0.0);
     lat0_ = 0.0;
     lon0_ = 0.0;
     alt0_ = 0.0;

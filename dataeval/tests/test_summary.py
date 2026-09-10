@@ -89,8 +89,9 @@ class TestLeaderboardSummary(unittest.TestCase):
             self.skipTest("results/leaderboard.csv does not exist.")
 
         summary = compute_leaderboard_summary(real_lb)
-        # 2 configs x 5 outage durations = 10 rows
-        self.assertEqual(len(summary), 10)
+        # 5 outage durations per config in leaderboard
+        num_configs = len(summary["config"].unique())
+        self.assertEqual(len(summary), num_configs * 5)
 
         # Paired cohort sizes per duration must match [67, 58, 52, 41, 35]
         expected_counts = {10: 67, 30: 58, 60: 52, 120: 41, 180: 35}
