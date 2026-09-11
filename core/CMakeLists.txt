@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(idr_core
     src/engine.cpp
     src/strapdown.cpp
+    src/ekf.cpp
 )
 
 target_include_directories(idr_core
@@ -52,6 +53,9 @@ if(BUILD_TESTING)
     add_executable(idr_strapdown_tests tests/test_strapdown.cpp)
     target_link_libraries(idr_strapdown_tests PRIVATE idr_core)
 
+    add_executable(idr_ekf_tests tests/test_ekf.cpp)
+    target_link_libraries(idr_ekf_tests PRIVATE idr_core)
+
     if(IDR_USE_FETCHED_GTEST)
         include(FetchContent)
         FetchContent_Declare(
@@ -69,16 +73,20 @@ if(BUILD_TESTING)
         include(GoogleTest)
         gtest_discover_tests(idr_tests)
         add_test(NAME idr_strapdown_tests COMMAND idr_strapdown_tests)
+        add_test(NAME idr_ekf_tests COMMAND idr_ekf_tests)
     else()
         add_test(NAME idr_core_tests COMMAND idr_tests)
         add_test(NAME idr_strapdown_tests COMMAND idr_strapdown_tests)
+        add_test(NAME idr_ekf_tests COMMAND idr_ekf_tests)
     endif()
 
     if(MSVC)
         target_compile_options(idr_tests PRIVATE /W4)
         target_compile_options(idr_strapdown_tests PRIVATE /W4)
+        target_compile_options(idr_ekf_tests PRIVATE /W4)
     else()
         target_compile_options(idr_tests PRIVATE -Wall -Wextra -Wpedantic)
         target_compile_options(idr_strapdown_tests PRIVATE -Wall -Wextra -Wpedantic)
+        target_compile_options(idr_ekf_tests PRIVATE -Wall -Wextra -Wpedantic)
     endif()
 endif()

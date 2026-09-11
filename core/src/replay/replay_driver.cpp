@@ -8,6 +8,7 @@
  */
 
 #include "idr/strapdown.hpp"
+#include "idr/ekf.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -187,7 +188,8 @@ bool replayInstance(
     const std::string& input_csv_path,
     const std::string& output_csv_path,
     size_t& out_num_samples,
-    const RunAttitude* att = nullptr
+    const RunAttitude* att = nullptr,
+    bool use_ekf = false
 ) {
     out_num_samples = 0;
     std::ifstream in(input_csv_path);
@@ -214,31 +216,32 @@ bool replayInstance(
         return false;
     }
 
-    // Initialize Strapdown INS
-    idr::StrapdownIns ins;
+    // Prepare initial attitude and gyro bias
+    idr::Quaternion q0;
+    idr::Vector3d gyro_bias(0.0, 0.0, 0.0);
     const idr::Vector3d initial_accel(init_state.ax0, init_state.ay0, init_state.az0);
 
     if (att != nullptr) {
-        idr::Quaternion q0;
         if (att->has_quaternion) {
-            // Full attitude quaternion from Module B (PCA yaw + Module A leveling, or PCA yaw + zero leveling)
             q0 = idr::Quaternion(att->qw, att->qx, att->qy, att->qz);
         } else if (att->leveling_source == "module_a_measured") {
-            // Parked run (no vehicle motion, but measured static pitch, roll, and gyro bias)
-            // Use coasting GNSS heading with measured pitch & roll
             q0 = idr::Quaternion::fromEulerEnu(init_state.heading_deg, att->pitch_rad, att->roll_rad);
         } else {
-            // Fallback flat heading
             q0 = idr::Quaternion::fromHeadingEnu(init_state.heading_deg);
         }
 
-        // Subtract gyro bias if from measured stationary window
-        idr::Vector3d gyro_bias(0.0, 0.0, 0.0);
         if (att->gyro_bias_source == "module_a_measured") {
             gyro_bias = idr::Vector3d(att->gb_x, att->gb_y, att->gb_z);
         }
+    } else {
+        q0 = idr::Quaternion::fromHeadingEnu(init_state.heading_deg);
+    }
 
-        ins.initializeWithAttitude(
+    idr::StrapdownIns ins;
+    idr::ErrorStateEkf ekf;
+
+    if (use_ekf) {
+        ekf.initializeWithAttitude(
             init_state.t0,
             init_state.lat0,
             init_state.lon0,
@@ -247,18 +250,33 @@ bool replayInstance(
             init_state.heading_deg,
             q0,
             gyro_bias,
+            idr::Vector3d(0.0, 0.0, 0.0),
             initial_accel
         );
     } else {
-        ins.initialize(
-            init_state.t0,
-            init_state.lat0,
-            init_state.lon0,
-            init_state.alt0,
-            init_state.speed_ms,
-            init_state.heading_deg,
-            initial_accel
-        );
+        if (att != nullptr) {
+            ins.initializeWithAttitude(
+                init_state.t0,
+                init_state.lat0,
+                init_state.lon0,
+                init_state.alt0,
+                init_state.speed_ms,
+                init_state.heading_deg,
+                q0,
+                gyro_bias,
+                initial_accel
+            );
+        } else {
+            ins.initialize(
+                init_state.t0,
+                init_state.lat0,
+                init_state.lon0,
+                init_state.alt0,
+                init_state.speed_ms,
+                init_state.heading_deg,
+                initial_accel
+            );
+        }
     }
 
     std::ofstream out(output_csv_path);
@@ -305,13 +323,26 @@ bool replayInstance(
         sample.my = my_str.empty() ? 0.0 : std::strtod(my_str.c_str(), nullptr);
         sample.mz = mz_str.empty() ? 0.0 : std::strtod(mz_str.c_str(), nullptr);
 
-        ins.update(sample);
+        double cur_lat = 0.0, cur_lon = 0.0, cur_speed = 0.0, cur_heading = 0.0;
+        if (use_ekf) {
+            ekf.update(sample);
+            cur_lat = ekf.getLatitude();
+            cur_lon = ekf.getLongitude();
+            cur_speed = ekf.getSpeed();
+            cur_heading = ekf.getHeadingDeg();
+        } else {
+            ins.update(sample);
+            cur_lat = ins.getLatitude();
+            cur_lon = ins.getLongitude();
+            cur_speed = ins.getSpeed();
+            cur_heading = ins.getHeadingDeg();
+        }
 
         out << std::setprecision(6) << sample.t << ","
-            << std::setprecision(8) << ins.getLatitude() << ","
-            << std::setprecision(8) << ins.getLongitude() << ","
-            << std::setprecision(4) << ins.getSpeed() << ","
-            << std::setprecision(4) << ins.getHeadingDeg() << "\n";
+            << std::setprecision(8) << cur_lat << ","
+            << std::setprecision(8) << cur_lon << ","
+            << std::setprecision(4) << cur_speed << ","
+            << std::setprecision(4) << cur_heading << "\n";
 
         out_num_samples++;
     }
@@ -338,6 +369,7 @@ int main(int argc, char* argv[]) {
     std::string attitude_csv = "";
     std::string single_outage_id = "";
     bool batch_mode = false;
+    bool use_ekf = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -351,12 +383,19 @@ int main(int argc, char* argv[]) {
             single_outage_id = argv[++i];
         } else if (arg == "--batch" || arg == "-b") {
             batch_mode = true;
+        } else if (arg == "--mode" && i + 1 < argc) {
+            std::string mode_str = argv[++i];
+            if (mode_str == "ekf") use_ekf = true;
+        } else if (arg == "--ekf") {
+            use_ekf = true;
         } else if (arg == "--help" || arg == "-h") {
             std::cout << "Usage: idr_replay [options]\n"
                       << "Options:\n"
                       << "  --cache-dir <dir>     Directory containing replay cache CSVs (default: data/processed/_cpp_replay_cache)\n"
                       << "  --out-dir <dir>       Destination directory for prediction CSVs (default: data/processed/cpp_predictions)\n"
                       << "  --attitude-csv <path> Path to module_b_initial_attitude.csv for initial attitude & gyro bias\n"
+                      << "  --mode <mode>         Estimation mode: 'strapdown' (default) or 'ekf'\n"
+                      << "  --ekf                 Shorthand for --mode ekf (15-State ES-EKF with ZUPT + NHC)\n"
                       << "  --batch               Run across all cached outage instances\n"
                       << "  --outage-id <id>      Replay a specific outage instance by ID\n"
                       << "  --help, -h            Show this help message\n";
@@ -393,9 +432,9 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        std::cout << "Replaying single outage: " << filename << "\n";
+        std::cout << "Replaying single outage: " << filename << " [Mode: " << (use_ekf ? "15-State ES-EKF" : "Strapdown INS") << "]\n";
         size_t num_samples = 0;
-        if (!replayInstance(in_path, out_path, num_samples, att_ptr)) {
+        if (!replayInstance(in_path, out_path, num_samples, att_ptr, use_ekf)) {
             std::cerr << "Failed to replay " << filename << "\n";
             return 1;
         }
@@ -413,7 +452,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::cout << "Starting C++ Strapdown INS Batch Replay:\n";
+    std::cout << "Starting C++ Replay Batch [Mode: " << (use_ekf ? "15-State ES-EKF (ZUPT+NHC)" : "Strapdown INS") << "]:\n";
     std::cout << "  Cache Directory:  " << cache_dir << "\n";
     std::cout << "  Output Directory: " << out_dir << "\n";
     std::cout << "  Attitude CSV:     " << (attitude_csv.empty() ? "(none)" : attitude_csv) << "\n";
@@ -440,7 +479,7 @@ int main(int argc, char* argv[]) {
         std::string out_path = out_dir + "/" + file;
 
         size_t samples = 0;
-        if (replayInstance(in_path, out_path, samples, att_ptr)) {
+        if (replayInstance(in_path, out_path, samples, att_ptr, use_ekf)) {
             processed_count++;
             total_points += samples;
         } else {
