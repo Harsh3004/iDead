@@ -59,6 +59,7 @@ void ErrorStateEkf::initializeWithAttitude(
     const Vector3d& initial_accel
 ) {
     t_ = t0;
+    t0_ = t0;
     lat0_ = lat0;
     lon0_ = lon0;
     alt0_ = alt0;
@@ -74,6 +75,8 @@ void ErrorStateEkf::initializeWithAttitude(
 
     const Vector3d gravity_nav(0.0, 0.0, -kGravity);
     last_accel_nav_ = q_.rotate(initial_accel - b_accel_) + gravity_nav;
+    last_f_body_ = initial_accel;
+    last_omega_body_ = Vector3d(0.0, 0.0, 0.0);
 
     initCovariance();
     imu_buffer_.clear();
@@ -90,6 +93,10 @@ void ErrorStateEkf::predict(double t, const Vector3d& f_body, const Vector3d& om
         t_ = t;
         return;
     }
+
+    // Cache latest raw sensor readings for adaptive noise estimation
+    last_f_body_ = f_body;
+    last_omega_body_ = omega_body;
 
     // Maintain buffer for stillness detection
     imu_buffer_.push_back({t, f_body, omega_body});
@@ -271,6 +278,40 @@ bool ErrorStateEkf::updateZupt() {
     return true;
 }
 
+double ErrorStateEkf::computeNhcSigmaLat() const noexcept {
+    const double dt_init = (t_ > t0_) ? (t_ - t0_) : 0.0;
+    double settle_extra = 0.0;
+    if (config_.nhc_settle_duration_s > 1e-6) {
+        settle_extra = config_.nhc_settle_sigma_extra * std::exp(-dt_init / config_.nhc_settle_duration_s);
+    }
+
+    const double speed = getSpeed();
+    const double w_yaw = std::abs(last_omega_body_.z - b_gyro_.z);
+    const double a_c = speed * w_yaw;
+
+    const double c_term = config_.nhc_curv_c_coeff * a_c;
+    const double yaw_term = config_.nhc_curv_yaw_coeff * w_yaw;
+
+    double lat_term = 0.0;
+    if (config_.nhc_curv_lat_coeff > 1e-6) {
+        const double a_lat = std::abs(last_f_body_.x - b_accel_.x);
+        lat_term = config_.nhc_curv_lat_coeff * a_lat;
+    }
+
+    const double curv_scale = std::sqrt(1.0 + c_term * c_term + lat_term * lat_term + yaw_term * yaw_term);
+
+    return (config_.sigma_nhc_lat + settle_extra) * curv_scale;
+}
+
+double ErrorStateEkf::computeNhcSigmaVert() const noexcept {
+    const double dt_init = (t_ > t0_) ? (t_ - t0_) : 0.0;
+    double settle_extra = 0.0;
+    if (config_.nhc_settle_duration_s > 1e-6) {
+        settle_extra = config_.nhc_settle_sigma_extra * std::exp(-dt_init / config_.nhc_settle_duration_s);
+    }
+    return config_.sigma_nhc_vert + settle_extra;
+}
+
 bool ErrorStateEkf::updateNhc() {
     const Matrix<3, 3> R = Matrix<3, 3>::fromQuaternion(q_);
 
@@ -305,10 +346,12 @@ bool ErrorStateEkf::updateNhc() {
     H(1, 7) = -(r3.x * v_skew(0, 1) + r3.z * v_skew(2, 1));
     H(1, 8) = -(r3.x * v_skew(0, 2) + r3.y * v_skew(1, 2));
 
-    // Innovation covariance: S = H * P * H^T + R_meas (2x2)
+    // Adaptive innovation covariance S = H * P * H^T + R_meas (2x2)
     Matrix<2, 2> S = H * P_ * H.transpose();
-    const double r_lat = config_.sigma_nhc_lat * config_.sigma_nhc_lat;
-    const double r_vert = config_.sigma_nhc_vert * config_.sigma_nhc_vert;
+    const double sigma_lat = computeNhcSigmaLat();
+    const double sigma_vert = computeNhcSigmaVert();
+    const double r_lat = sigma_lat * sigma_lat;
+    const double r_vert = sigma_vert * sigma_vert;
     S(0, 0) += r_lat;
     S(1, 1) += r_vert;
 

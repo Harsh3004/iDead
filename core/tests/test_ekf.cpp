@@ -295,15 +295,99 @@ void testNumericalCrossCheck() {
     // Values directly from results/module_b_initial_attitude.csv for pair_Vta2:
     // qw=-0.9387507, qx=0.032916, qy=0.0255123, qz=-0.3420713
     // gyro bias = (-0.00259082, 0.00719796, -0.0053898)
-    // Python prototype reference: final lat=52.79256590, lon=-1.62431522, error ~1585.87m
+    // Python prototype reference (v2 tuned): final lat=52.79245735, lon=-1.62577604
     const std::string path_vta2 = "data/processed/_cpp_replay_cache/pair_Vta2__180s__0.csv";
     const idr::Quaternion q_vta2(-0.9387507, 0.032916, 0.0255123, -0.3420713);
     const idr::Vector3d gb_vta2(-0.00259082, 0.00719796, -0.0053898);
 
     std::cout << "--> Cross-checking instance 2: pair_Vta2__180s__0\n";
-    runCrossCheckInstance(path_vta2, q_vta2, gb_vta2, 52.79256590, -1.62431522, 1585.87, 0.05);
+    runCrossCheckInstance(path_vta2, q_vta2, gb_vta2, 52.79245735, -1.62577604, 1585.87, 0.05);
 
     std::cout << "  [PASS] Numerical cross-check verified on reference instances.\n";
+}
+
+void testCurvatureAdaptiveNhc() {
+    std::cout << "[RUN] testCurvatureAdaptiveNhc (Step 22 Kinematic)...\n";
+
+    idr::EkfConfig config;
+    config.nhc_settle_duration_s = 2.0;
+    config.nhc_settle_sigma_extra = 4.0;
+    config.nhc_curv_c_coeff = 2.0;
+    config.nhc_curv_lat_coeff = 0.0;
+    config.nhc_curv_yaw_coeff = 0.0;
+    config.sigma_nhc_lat = 0.15;
+    config.sigma_nhc_vert = 0.15;
+
+    idr::ErrorStateEkf ekf(config);
+    ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 90.0);
+
+    // 1. Advance past settling window on straight road with heavy injected accelerometer vibration noise (+/- 2.0 m/s^2, omega_z = 0)
+    for (int i = 1; i <= 300; ++i) {
+        const double t = i * 0.1;
+        // High-frequency zero-mean vibration noise on lateral axis (body X)
+        const double ax_noise = (i % 2 == 0) ? 2.0 : -2.0;
+        ekf.predict(t, idr::Vector3d(ax_noise, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.0));
+        ekf.updateNhc();
+    }
+
+    // Kinematic centripetal acceleration is a_c = speed * omega_z = 20.0 * 0.0 = 0.0 m/s^2
+    // Therefore, despite 2.0 m/s^2 lateral accelerometer vibration noise, sigma_nhc_lat must remain strictly 0.15 m/s!
+    const double sigma_vibration_lat = ekf.computeNhcSigmaLat();
+    const double sigma_vibration_vert = ekf.computeNhcSigmaVert();
+    std::cout << "  Straight road with 2.0 m/s^2 accel vibration noise sigma_lat: " << sigma_vibration_lat << " m/s (expected 0.15)\n";
+    assert(std::abs(sigma_vibration_lat - 0.15) < 1e-4);
+    assert(std::abs(sigma_vibration_vert - 0.15) < 1e-4);
+
+    // 2. Introduce real sustained curve: omega_z = 0.1 rad/s at speed ~10-20 m/s -> a_c ~ 1-2 m/s^2
+    ekf.predict(30.1, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.1));
+    const double sigma_curve_lat = ekf.computeNhcSigmaLat();
+    const double current_speed = ekf.getSpeed();
+    const double w_yaw = std::abs(0.1 - ekf.getGyroBias().z);
+    const double expected_ac = current_speed * w_yaw;
+    const double expected_sigma = 0.15 * std::sqrt(1.0 + (2.0 * expected_ac) * (2.0 * expected_ac));
+    std::cout << "  Sustained curve (speed=" << current_speed << " m/s, a_c=" << expected_ac << " m/s^2) sigma_lat: " << sigma_curve_lat << " m/s (expected ~" << expected_sigma << ")\n";
+    assert(std::abs(sigma_curve_lat - expected_sigma) < 1e-4);
+    assert(sigma_curve_lat > 0.30); // Significantly inflated above 0.15 m/s baseline
+
+    // Vertical sigma must remain unaffected
+    const double sigma_curve_vert = ekf.computeNhcSigmaVert();
+    assert(std::abs(sigma_curve_vert - 0.15) < 1e-4);
+
+    std::cout << "  [PASS] Step 22 Kinematic centripetal NHC noise & vibration immunity verified.\n";
+}
+
+void testSettlingGracePeriod() {
+    std::cout << "[RUN] testSettlingGracePeriod...\n";
+
+    idr::EkfConfig config;
+    config.nhc_settle_duration_s = 2.0;
+    config.nhc_settle_sigma_extra = 4.0;
+    config.nhc_curv_lat_coeff = 5.0;
+    config.nhc_curv_yaw_coeff = 2.0;
+    config.sigma_nhc_lat = 0.15;
+    config.sigma_nhc_vert = 0.15;
+
+    idr::ErrorStateEkf ekf(config);
+    ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0);
+
+    // At t = 0: extra = 4.0, curv_scale = 1.0 -> sigma_lat = 4.15
+    const double sigma_t0 = ekf.computeNhcSigmaLat();
+    std::cout << "  t=0s sigma_lat: " << sigma_t0 << " m/s (expected 4.15)\n";
+    assert(std::abs(sigma_t0 - 4.15) < 1e-3);
+
+    // At t = 2.0s (1 tau): extra = 4.0 * exp(-1) ~ 1.4715 -> sigma_lat ~ 1.6215
+    ekf.predict(2.0, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.0));
+    const double sigma_t2 = ekf.computeNhcSigmaLat();
+    std::cout << "  t=2s (1 tau) sigma_lat: " << sigma_t2 << " m/s (expected ~1.62)\n";
+    assert(std::abs(sigma_t2 - (0.15 + 4.0 * std::exp(-1.0))) < 1e-3);
+
+    // At t = 10.0s (5 tau): extra = 4.0 * exp(-5) ~ 0.02695 -> sigma_lat ~ 0.177
+    ekf.predict(10.0, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.0));
+    const double sigma_t10 = ekf.computeNhcSigmaLat();
+    std::cout << "  t=10s (5 tau) sigma_lat: " << sigma_t10 << " m/s (expected ~0.177)\n";
+    assert(std::abs(sigma_t10 - (0.15 + 4.0 * std::exp(-5.0))) < 1e-3);
+
+    std::cout << "  [PASS] Settling grace period exponential decay verified.\n";
 }
 
 } // namespace
@@ -318,6 +402,8 @@ int main() {
     testZuptUpdate();
     testNhcUpdate();
     testCovarianceStability();
+    testCurvatureAdaptiveNhc();
+    testSettlingGracePeriod();
     testNumericalCrossCheck();
 
     std::cout << "========================================\n";

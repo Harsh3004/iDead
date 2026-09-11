@@ -189,7 +189,8 @@ bool replayInstance(
     const std::string& output_csv_path,
     size_t& out_num_samples,
     const RunAttitude* att = nullptr,
-    bool use_ekf = false
+    bool use_ekf = false,
+    const idr::EkfConfig* ekf_config = nullptr
 ) {
     out_num_samples = 0;
     std::ifstream in(input_csv_path);
@@ -238,7 +239,7 @@ bool replayInstance(
     }
 
     idr::StrapdownIns ins;
-    idr::ErrorStateEkf ekf;
+    idr::ErrorStateEkf ekf(ekf_config ? *ekf_config : idr::EkfConfig());
 
     if (use_ekf) {
         ekf.initializeWithAttitude(
@@ -370,6 +371,7 @@ int main(int argc, char* argv[]) {
     std::string single_outage_id = "";
     bool batch_mode = false;
     bool use_ekf = false;
+    idr::EkfConfig ekf_config;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -385,17 +387,36 @@ int main(int argc, char* argv[]) {
             batch_mode = true;
         } else if (arg == "--mode" && i + 1 < argc) {
             std::string mode_str = argv[++i];
-            if (mode_str == "ekf") use_ekf = true;
+            if (mode_str == "ekf" || mode_str == "ekf_v3") {
+                use_ekf = true;
+                ekf_config = idr::EkfConfig(); // v3 default: kinematic centripetal curvature
+            } else if (mode_str == "ekf_v2") {
+                use_ekf = true;
+                ekf_config = idr::EkfConfig();
+                ekf_config.nhc_curv_c_coeff = 0.0;
+                ekf_config.nhc_curv_lat_coeff = 5.0;
+                ekf_config.nhc_curv_yaw_coeff = 2.0;
+            } else if (mode_str == "ekf_v1") {
+                use_ekf = true;
+                ekf_config = idr::EkfConfig();
+                ekf_config.nhc_settle_sigma_extra = 0.0;
+                ekf_config.nhc_curv_c_coeff = 0.0;
+                ekf_config.nhc_curv_lat_coeff = 0.0;
+                ekf_config.nhc_curv_yaw_coeff = 0.0;
+            } else if (mode_str == "strapdown") {
+                use_ekf = false;
+            }
         } else if (arg == "--ekf") {
             use_ekf = true;
+            ekf_config = idr::EkfConfig();
         } else if (arg == "--help" || arg == "-h") {
             std::cout << "Usage: idr_replay [options]\n"
                       << "Options:\n"
                       << "  --cache-dir <dir>     Directory containing replay cache CSVs (default: data/processed/_cpp_replay_cache)\n"
                       << "  --out-dir <dir>       Destination directory for prediction CSVs (default: data/processed/cpp_predictions)\n"
                       << "  --attitude-csv <path> Path to module_b_initial_attitude.csv for initial attitude & gyro bias\n"
-                      << "  --mode <mode>         Estimation mode: 'strapdown' (default) or 'ekf'\n"
-                      << "  --ekf                 Shorthand for --mode ekf (15-State ES-EKF with ZUPT + NHC)\n"
+                      << "  --mode <mode>         Estimation mode: 'strapdown', 'ekf'/'ekf_v3' (default EKF v3), 'ekf_v2', or 'ekf_v1'\n"
+                      << "  --ekf                 Shorthand for --mode ekf (15-State ES-EKF with ZUPT + NHC v3)\n"
                       << "  --batch               Run across all cached outage instances\n"
                       << "  --outage-id <id>      Replay a specific outage instance by ID\n"
                       << "  --help, -h            Show this help message\n";
@@ -434,7 +455,7 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Replaying single outage: " << filename << " [Mode: " << (use_ekf ? "15-State ES-EKF" : "Strapdown INS") << "]\n";
         size_t num_samples = 0;
-        if (!replayInstance(in_path, out_path, num_samples, att_ptr, use_ekf)) {
+        if (!replayInstance(in_path, out_path, num_samples, att_ptr, use_ekf, &ekf_config)) {
             std::cerr << "Failed to replay " << filename << "\n";
             return 1;
         }
@@ -479,7 +500,7 @@ int main(int argc, char* argv[]) {
         std::string out_path = out_dir + "/" + file;
 
         size_t samples = 0;
-        if (replayInstance(in_path, out_path, samples, att_ptr, use_ekf)) {
+        if (replayInstance(in_path, out_path, samples, att_ptr, use_ekf, &ekf_config)) {
             processed_count++;
             total_points += samples;
         } else {

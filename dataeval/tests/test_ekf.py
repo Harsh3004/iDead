@@ -130,6 +130,74 @@ class TestErrorStateEkf(unittest.TestCase):
             eigvals = np.linalg.eigvalsh(self.ekf.P)
             self.assertTrue(np.all(eigvals > 0), f"Covariance matrix lost positive-definiteness at step {i}: min eig={np.min(eigvals)}")
 
+    def test_curvature_adaptive_nhc_noise(self):
+        """Verify kinematic centripetal NHC noise: vibration immunity on straight road and inflation under sustained turn."""
+        cfg = EkfConfig(
+            nhc_settle_duration_s=2.0,
+            nhc_settle_sigma_extra=4.0,
+            nhc_curv_c_coeff=2.0,
+            nhc_curv_lat_coeff=0.0,
+            nhc_curv_yaw_coeff=0.0,
+            sigma_nhc_lat=0.15,
+            sigma_nhc_vert=0.15,
+        )
+        ekf = ErrorStateEkf(cfg)
+        ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 90.0)
+
+        # 1. Straight road past settling (30s = 15 tau >> 2s tau) with +/- 2.0 m/s^2 lateral accelerometer noise
+        for i in range(1, 301):
+            t = i * 0.1
+            ax_noise = 2.0 if (i % 2 == 0) else -2.0
+            ekf.predict(t, np.array([ax_noise, 0.0, ekf.kGravity]), np.zeros(3))
+            ekf.update_nhc()
+
+        # Kinematic centripetal acceleration is a_c = speed * omega_z = 20.0 * 0.0 = 0.0 m/s^2
+        # Therefore, despite 2.0 m/s^2 lateral accelerometer vibration noise, sigma_nhc_lat must remain strictly 0.15 m/s!
+        sigma_vibration_lat = ekf.compute_nhc_sigma_lat()
+        sigma_vibration_vert = ekf.compute_nhc_sigma_vert()
+        self.assertAlmostEqual(sigma_vibration_lat, 0.15, places=4)
+        self.assertAlmostEqual(sigma_vibration_vert, 0.15, places=4)
+
+        # 2. Sustained curve: omega_z = 0.1 rad/s at speed ~ 20 m/s -> a_c ~ 2.0 m/s^2
+        ekf.predict(30.1, np.array([0.0, 0.0, ekf.kGravity]), np.array([0.0, 0.0, 0.1]))
+        sigma_curve_lat = ekf.compute_nhc_sigma_lat()
+        current_speed = float(np.linalg.norm(ekf.v_enu))
+        w_yaw = abs(0.1 - ekf.b_gyro[2])
+        expected_ac = current_speed * w_yaw
+        expected_sigma = 0.15 * np.sqrt(1.0 + (2.0 * expected_ac) ** 2)
+        self.assertAlmostEqual(sigma_curve_lat, expected_sigma, places=4)
+        self.assertGreater(sigma_curve_lat, 0.30)
+
+        # Vertical noise should be completely unaffected
+        sigma_curve_vert = ekf.compute_nhc_sigma_vert()
+        self.assertAlmostEqual(sigma_curve_vert, 0.15, places=4)
+
+    def test_settling_grace_period(self):
+        """Verify exponential decay of NHC settling grace period from t=t0."""
+        cfg = EkfConfig(
+            nhc_settle_duration_s=2.0,
+            nhc_settle_sigma_extra=4.0,
+            nhc_curv_lat_coeff=5.0,
+            nhc_curv_yaw_coeff=2.0,
+            sigma_nhc_lat=0.15,
+            sigma_nhc_vert=0.15,
+        )
+        ekf = ErrorStateEkf(cfg)
+        ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0)
+
+        # At t=0: sigma_lat = 0.15 + 4.0 = 4.15
+        self.assertAlmostEqual(ekf.compute_nhc_sigma_lat(), 4.15, places=2)
+
+        # At t=2.0s (1 tau): extra = 4.0 * exp(-1) ~ 1.4715 -> sigma_lat ~ 1.6215
+        ekf.predict(2.0, np.array([0.0, 0.0, ekf.kGravity]), np.zeros(3))
+        expected_1tau = 0.15 + 4.0 * np.exp(-1.0)
+        self.assertAlmostEqual(ekf.compute_nhc_sigma_lat(), expected_1tau, places=2)
+
+        # At t=10.0s (5 tau): extra = 4.0 * exp(-5) ~ 0.027 -> sigma_lat ~ 0.177
+        ekf.predict(10.0, np.array([0.0, 0.0, ekf.kGravity]), np.zeros(3))
+        expected_5tau = 0.15 + 4.0 * np.exp(-5.0)
+        self.assertAlmostEqual(ekf.compute_nhc_sigma_lat(), expected_5tau, places=2)
+
 
 if __name__ == "__main__":
     unittest.main()

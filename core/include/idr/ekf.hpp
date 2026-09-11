@@ -28,6 +28,13 @@ struct EkfConfig {
     double zupt_accel_std_thresh_m_s2{0.25}; // vibration threshold
     double zupt_accel_mag_window_s{0.6};     // window duration for stillness check
     double zupt_speed_gate_m_s{2.5};         // speed gate to avoid false triggers
+
+    // Step 20 & Step 22: Short-horizon settling and curvature-adaptive NHC
+    double nhc_settle_duration_s{2.0};        // Settling time constant tau [s]
+    double nhc_settle_sigma_extra{4.0};       // Initial extra sigma at t=t0 [m/s]
+    double nhc_curv_c_coeff{2.0};             // Step 22: Kinematic centripetal accel coeff (k_c) for a_c = v * w_yaw
+    double nhc_curv_lat_coeff{0.0};           // Deprecated Step 20 raw accel coeff
+    double nhc_curv_yaw_coeff{0.0};           // Curvature inflation coefficient for direct yaw rate
 };
 
 struct ImuBufferedSample {
@@ -114,6 +121,10 @@ public:
     double getTimestamp() const noexcept { return t_; }
     const EkfConfig& getConfig() const noexcept { return config_; }
 
+    // Diagnostic & testing getters for adaptive NHC measurement noise
+    double computeNhcSigmaLat() const noexcept;
+    double computeNhcSigmaVert() const noexcept;
+
 private:
     void initCovariance();
 
@@ -122,6 +133,7 @@ private:
 
     // Nominal state
     double t_{0.0};
+    double t0_{0.0};
     Vector3d p_enu_{0.0, 0.0, 0.0};
     Vector3d v_enu_{0.0, 0.0, 0.0};
     Quaternion q_{1.0, 0.0, 0.0, 0.0};
@@ -133,8 +145,10 @@ private:
     double lon0_{0.0};
     double alt0_{0.0};
 
-    // Accelerometer navigation acceleration for trapezoidal integration
+    // Last IMU readings for trapezoidal integration & adaptive noise calculation
     Vector3d last_accel_nav_{0.0, 0.0, 0.0};
+    Vector3d last_f_body_{0.0, 0.0, 0.0};
+    Vector3d last_omega_body_{0.0, 0.0, 0.0};
 
     // Error covariance P in R^{15x15}
     Matrix<15, 15> P_;

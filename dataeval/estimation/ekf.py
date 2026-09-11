@@ -115,6 +115,13 @@ class EkfConfig:
     zupt_accel_mag_window_s: float = 0.6      # window duration for variance check
     zupt_speed_gate_m_s: float = 2.5          # velocity gate to prevent false trigger on highway
 
+    # Step 20 & Step 22: Short-horizon settling and curvature-adaptive NHC
+    nhc_settle_duration_s: float = 2.0        # Settling time constant tau [s]
+    nhc_settle_sigma_extra: float = 4.0       # Initial extra sigma at t=t0 [m/s]
+    nhc_curv_c_coeff: float = 2.0             # Step 22: Kinematic centripetal accel coeff (k_c) for a_c = v * w_yaw
+    nhc_curv_lat_coeff: float = 0.0           # Deprecated Step 20 raw accel coeff
+    nhc_curv_yaw_coeff: float = 0.0           # Curvature inflation coefficient for direct yaw rate
+
 
 class ErrorStateEkf:
     """15-State Error-State Extended Kalman Filter for 3D INS with ZUPT and NHC."""
@@ -126,6 +133,7 @@ class ErrorStateEkf:
 
         # Nominal States
         self.t: float = 0.0
+        self.t0: float = 0.0
         self.p_enu: np.ndarray = np.zeros(3, dtype=float)     # Position [m] East, North, Up
         self.v_enu: np.ndarray = np.zeros(3, dtype=float)     # Velocity [m/s] East, North, Up
         self.q: np.ndarray = np.array([1.0, 0.0, 0.0, 0.0])   # Attitude [w, x, y, z] Body -> ENU
@@ -141,8 +149,10 @@ class ErrorStateEkf:
         self.P: np.ndarray = np.eye(15, dtype=float)
         self._init_covariance()
 
-        # Last kinematic acceleration for trapezoidal integration
+        # Last kinematic acceleration for trapezoidal integration & adaptive noise
         self.last_accel_nav: np.ndarray = np.zeros(3, dtype=float)
+        self.last_f_body: np.ndarray = np.zeros(3, dtype=float)
+        self.last_omega_body: np.ndarray = np.zeros(3, dtype=float)
 
         # Buffers for stillness detection
         self.imu_buffer: List[Tuple[float, np.ndarray, np.ndarray]] = [] # (t, f_b, omega_b)
@@ -198,6 +208,8 @@ class ErrorStateEkf:
         init_f = np.array(initial_accel, dtype=float) if initial_accel is not None else np.array([0.0, 0.0, self.kGravity])
         gravity_nav = np.array([0.0, 0.0, -self.kGravity], dtype=float)
         self.last_accel_nav = quat_rotate(self.q, init_f - self.b_accel) + gravity_nav
+        self.last_f_body = init_f.copy()
+        self.last_omega_body = np.zeros(3, dtype=float)
 
         self._init_covariance()
         self.imu_buffer = []
@@ -212,6 +224,10 @@ class ErrorStateEkf:
         if dt <= 0.0 or dt > 1.0:
             self.t = t
             return
+
+        # Cache latest raw sensor readings for adaptive noise estimation
+        self.last_f_body = np.array(f_body, dtype=float).copy()
+        self.last_omega_body = np.array(omega_body, dtype=float).copy()
 
         # Maintain buffer for stillness detection
         self.imu_buffer.append((t, f_body.copy(), omega_body.copy()))
@@ -295,6 +311,36 @@ class ErrorStateEkf:
         R_meas = (self.cfg.sigma_zupt ** 2) * np.eye(3)
         return self._apply_kalman_update(H, z, R_meas)
 
+    def compute_nhc_sigma_lat(self) -> float:
+        """Compute causal settling- and curvature-adaptive lateral velocity constraint noise."""
+        dt_init = max(0.0, self.t - self.t0)
+        settle_extra = 0.0
+        if self.cfg.nhc_settle_duration_s > 1e-6:
+            settle_extra = self.cfg.nhc_settle_sigma_extra * np.exp(-dt_init / self.cfg.nhc_settle_duration_s)
+
+        speed = float(np.linalg.norm(self.v_enu))
+        w_yaw = abs(self.last_omega_body[2] - self.b_gyro[2])
+        a_c = speed * w_yaw
+
+        c_term = self.cfg.nhc_curv_c_coeff * a_c
+        yaw_term = self.cfg.nhc_curv_yaw_coeff * w_yaw
+        lat_term = 0.0
+        if self.cfg.nhc_curv_lat_coeff > 1e-6:
+            a_lat = abs(self.last_f_body[0] - self.b_accel[0])
+            lat_term = self.cfg.nhc_curv_lat_coeff * a_lat
+
+        curv_scale = np.sqrt(1.0 + c_term * c_term + lat_term * lat_term + yaw_term * yaw_term)
+
+        return float((self.cfg.sigma_nhc_lat + settle_extra) * curv_scale)
+
+    def compute_nhc_sigma_vert(self) -> float:
+        """Compute causal settling-adaptive vertical velocity constraint noise."""
+        dt_init = max(0.0, self.t - self.t0)
+        settle_extra = 0.0
+        if self.cfg.nhc_settle_duration_s > 1e-6:
+            settle_extra = self.cfg.nhc_settle_sigma_extra * np.exp(-dt_init / self.cfg.nhc_settle_duration_s)
+        return float(self.cfg.sigma_nhc_vert + settle_extra)
+
     def update_nhc(self) -> bool:
         """Apply Non-Holonomic Constraints (NHC) on lateral and vertical body velocity."""
         R = quat_to_rot_matrix(self.q)
@@ -317,7 +363,9 @@ class ErrorStateEkf:
         H[1, 3:6] = r3
         H[1, 6:9] = - (r3 @ v_skew)
 
-        R_meas = np.diag([self.cfg.sigma_nhc_lat ** 2, self.cfg.sigma_nhc_vert ** 2])
+        sigma_lat = self.compute_nhc_sigma_lat()
+        sigma_vert = self.compute_nhc_sigma_vert()
+        R_meas = np.diag([sigma_lat ** 2, sigma_vert ** 2])
         return self._apply_kalman_update(H, z, R_meas)
 
     def _apply_kalman_update(self, H: np.ndarray, z: np.ndarray, R_meas: np.ndarray) -> bool:
