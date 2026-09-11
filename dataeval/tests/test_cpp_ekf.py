@@ -8,12 +8,14 @@ from dataeval.harness.run_ekf_replay import (
     CONFIG_EKF,
     CONFIG_EKF_V2,
     CONFIG_EKF_V3,
+    CONFIG_EKF_V4,
     CONFIG_CORRECTED,
     CONFIG_BARE,
     CONFIG_CV,
     generate_three_way_report,
     generate_step20_report,
     generate_step22_report,
+    generate_step24_report,
 )
 
 
@@ -28,8 +30,16 @@ class TestCppEkf(unittest.TestCase):
         csv_files = list(pred_dir.glob("*.csv"))
         self.assertEqual(len(csv_files), 253, "Must contain exactly 253 EKF prediction CSVs")
 
+    def test_ekf_v4_predictions_output_directory(self):
+        """Verify C++ EKF v4 predictions directory exists and contains 253 instances."""
+        pred_dir = Path("data/processed/cpp_predictions_ekf_v4")
+        if not pred_dir.exists():
+            self.skipTest("data/processed/cpp_predictions_ekf_v4 not present")
+        csv_files = list(pred_dir.glob("*.csv"))
+        self.assertEqual(len(csv_files), 253, "Must contain exactly 253 EKF v4 prediction CSVs")
+
     def test_leaderboard_augmented_with_ekf(self):
-        """Verify results/leaderboard.csv contains exactly 253 ekf_zupt_nhc_v1 rows and 1,260, 1,513, or 1,766 total rows."""
+        """Verify results/leaderboard.csv contains exactly 253 rows per config and valid total rows."""
         lb_path = Path("results/leaderboard.csv")
         if not lb_path.exists():
             self.skipTest("results/leaderboard.csv does not exist")
@@ -37,7 +47,7 @@ class TestCppEkf(unittest.TestCase):
         df = pd.read_csv(lb_path)
         ekf_df = df[df["config"] == CONFIG_EKF]
         self.assertEqual(len(ekf_df), 253, f"Must contain exactly 253 {CONFIG_EKF} rows")
-        self.assertIn(len(df), [1260, 1513, 1766], "Leaderboard must contain 1,260 (v1), 1,513 (v2), or 1,766 (v3) rows")
+        self.assertIn(len(df), [1260, 1513, 1766, 2019], "Leaderboard must contain 1,260 (v1), 1,513 (v2), 1,766 (v3), or 2,019 (v4) rows")
 
         # Validate non-null entries
         self.assertTrue(ekf_df["final_pos_error_m"].notna().all())
@@ -59,6 +69,14 @@ class TestCppEkf(unittest.TestCase):
             self.assertTrue(ekf_v3_df["final_pos_error_m"].notna().all())
             self.assertTrue(ekf_v3_df["outage_s"].isin([10, 30, 60, 120, 180]).all())
             self.assertTrue(ekf_v3_df["run_id"].notna().all())
+
+        # If v4 rows present, validate v4
+        if (df["config"] == CONFIG_EKF_V4).any():
+            ekf_v4_df = df[df["config"] == CONFIG_EKF_V4]
+            self.assertEqual(len(ekf_v4_df), 253, f"Must contain exactly 253 {CONFIG_EKF_V4} rows")
+            self.assertTrue(ekf_v4_df["final_pos_error_m"].notna().all())
+            self.assertTrue(ekf_v4_df["outage_s"].isin([10, 30, 60, 120, 180]).all())
+            self.assertTrue(ekf_v4_df["run_id"].notna().all())
 
     def test_three_way_report_generation(self):
         """Verify three-way report generates required sections and tables."""
@@ -103,6 +121,21 @@ class TestCppEkf(unittest.TestCase):
             self.assertIn("## 6. Straight-Road Vibration Immunity on Previously Regressed Instances", report)
             self.assertIn("## 7. Dead-Reckoned Speed Dependency & Stability Risk Audit", report)
 
+    def test_step24_report_generation(self):
+        """Verify Step 24 report generates required sections and tables."""
+        lb_path = Path("results/leaderboard.csv")
+        if not lb_path.exists():
+            self.skipTest("results/leaderboard.csv does not exist")
+
+        df = pd.read_csv(lb_path)
+        if (df["config"] == CONFIG_EKF_V4).any():
+            report = generate_step24_report(report_path=None)
+            self.assertIn("## 1. Executive Summary & Physical Fixes Delivered", report)
+            self.assertIn("## 2. Seven-Way Median & p95 Performance Comparison", report)
+            self.assertIn("## 3. Fleetwide Head-to-Head Win-Rate Comparisons", report)
+            self.assertIn("## 4. Straight-Road Road Vibration Immunity Audit", report)
+            self.assertIn("## 5. Curve Dynamic Bias & Speed Floor Recovery Audit", report)
+
     def test_leaderboard_summary_has_ekf_rows(self):
         """Verify results/leaderboard_summary.csv contains 5 rows for each EKF config present."""
         sum_path = Path("results/leaderboard_summary.csv")
@@ -123,6 +156,11 @@ class TestCppEkf(unittest.TestCase):
             v3_sum = df[df["config"] == CONFIG_EKF_V3]
             self.assertEqual(len(v3_sum), 5, f"Must contain 5 duration rows for {CONFIG_EKF_V3}")
             self.assertListEqual(sorted(v3_sum["outage_s"].tolist()), [10, 30, 60, 120, 180])
+
+        if (df["config"] == CONFIG_EKF_V4).any():
+            v4_sum = df[df["config"] == CONFIG_EKF_V4]
+            self.assertEqual(len(v4_sum), 5, f"Must contain 5 duration rows for {CONFIG_EKF_V4}")
+            self.assertListEqual(sorted(v4_sum["outage_s"].tolist()), [10, 30, 60, 120, 180])
 
 
 if __name__ == "__main__":

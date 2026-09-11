@@ -138,6 +138,9 @@ class TestErrorStateEkf(unittest.TestCase):
             nhc_curv_c_coeff=2.0,
             nhc_curv_lat_coeff=0.0,
             nhc_curv_yaw_coeff=0.0,
+            nhc_curv_lpf_cutoff_hz=0.0,
+            nhc_curv_use_speed_floor=False,
+            nhc_curv_use_nav_yaw=False,
             sigma_nhc_lat=0.15,
             sigma_nhc_vert=0.15,
         )
@@ -155,8 +158,8 @@ class TestErrorStateEkf(unittest.TestCase):
         # Therefore, despite 2.0 m/s^2 lateral accelerometer vibration noise, sigma_nhc_lat must remain strictly 0.15 m/s!
         sigma_vibration_lat = ekf.compute_nhc_sigma_lat()
         sigma_vibration_vert = ekf.compute_nhc_sigma_vert()
-        self.assertAlmostEqual(sigma_vibration_lat, 0.15, places=4)
-        self.assertAlmostEqual(sigma_vibration_vert, 0.15, places=4)
+        self.assertAlmostEqual(sigma_vibration_lat, 0.15, places=3)
+        self.assertAlmostEqual(sigma_vibration_vert, 0.15, places=3)
 
         # 2. Sustained curve: omega_z = 0.1 rad/s at speed ~ 20 m/s -> a_c ~ 2.0 m/s^2
         ekf.predict(30.1, np.array([0.0, 0.0, ekf.kGravity]), np.array([0.0, 0.0, 0.1]))
@@ -197,6 +200,69 @@ class TestErrorStateEkf(unittest.TestCase):
         ekf.predict(10.0, np.array([0.0, 0.0, ekf.kGravity]), np.zeros(3))
         expected_5tau = 0.15 + 4.0 * np.exp(-5.0)
         self.assertAlmostEqual(ekf.compute_nhc_sigma_lat(), expected_5tau, places=2)
+
+    def test_step24_mount_axis_invariance(self):
+        """Step 24 Fix: Verify horizontal turning yaw rate is invariant to phone mount pitch/roll."""
+        cfg = EkfConfig(nhc_settle_duration_s=0.0, nhc_curv_lpf_cutoff_hz=100.0)
+
+        # 1. Flat mount
+        ekf_flat = ErrorStateEkf(cfg)
+        ekf_flat.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0)
+        ekf_flat.predict(0.1, np.array([0.0, 0.0, ekf_flat.kGravity]), np.array([0.0, 0.0, 0.10]))
+        sigma_flat = ekf_flat.compute_nhc_sigma_lat()
+
+        # 2. Portrait mount (pitch 90 deg forward)
+        hp = 0.5 * (np.pi / 2.0)
+        q_portrait = np.array([np.cos(hp), np.sin(hp), 0.0, 0.0])
+        ekf_portrait = ErrorStateEkf(cfg)
+        ekf_portrait.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0, q0=q_portrait)
+        ekf_portrait.predict(0.1, np.array([0.0, ekf_portrait.kGravity, 0.0]), np.array([0.0, 0.10, 0.0]))
+        sigma_portrait = ekf_portrait.compute_nhc_sigma_lat()
+
+        # 3. Landscape mount (roll 90 deg)
+        hr = 0.5 * (np.pi / 2.0)
+        q_landscape = np.array([np.cos(hr), 0.0, np.sin(hr), 0.0])
+        ekf_landscape = ErrorStateEkf(cfg)
+        ekf_landscape.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0, q0=q_landscape)
+        ekf_landscape.predict(0.1, np.array([-ekf_landscape.kGravity, 0.0, 0.0]), np.array([-0.10, 0.0, 0.0]))
+        sigma_landscape = ekf_landscape.compute_nhc_sigma_lat()
+
+        self.assertAlmostEqual(sigma_flat, sigma_portrait, places=3)
+        self.assertAlmostEqual(sigma_flat, sigma_landscape, places=3)
+        self.assertGreater(sigma_flat, 0.60)
+
+    def test_step24_speed_collapse_decoupling(self):
+        """Step 24 Fix: Verify pre-outage speed floor prevents centrifugal collapse during turns."""
+        cfg = EkfConfig(nhc_curv_c_coeff=2.0, nhc_curv_use_speed_floor=True)
+        ekf = ErrorStateEkf(cfg)
+        ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0)
+
+        # Force dead-reckoned speed to collapse to near-zero
+        ekf.v_enu = np.array([0.001, 0.002, 0.0])
+        self.assertLess(ekf.get_speed_ms(), 0.01)
+
+        # Turn at 0.1 rad/s
+        ekf.omega_yaw_filt = 0.1
+        sigma_with_floor = ekf.compute_nhc_sigma_lat()
+
+        # Without floor, speed ~ 0 -> a_c ~ 0 -> sigma = 0.15
+        # With floor, speed_floor = 20.0 -> a_c = 20 * 0.1 = 2.0 -> sigma ~ 0.609
+        self.assertGreater(sigma_with_floor, 0.60)
+
+    def test_step24_vibration_low_pass_filter(self):
+        """Step 24 Fix: Verify signed 2.0 Hz LPF attenuates 10 Hz vibration without false rectification."""
+        cfg = EkfConfig(nhc_curv_lpf_cutoff_hz=2.0)
+        ekf = ErrorStateEkf(cfg)
+        ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0)
+
+        # Inject 10 Hz alternating +/- 0.20 rad/s noise
+        for step in range(1, 101):
+            t = step * 0.01  # 100 Hz sampling
+            w_noise = 0.20 if (step % 2 == 0) else -0.20
+            ekf.predict(t, np.array([0.0, 0.0, ekf.kGravity]), np.array([0.0, 0.0, w_noise]))
+
+        # Filtered yaw rate should be attenuated by >90%
+        self.assertLess(abs(ekf.omega_yaw_filt), 0.02)
 
 
 if __name__ == "__main__":

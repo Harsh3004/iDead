@@ -29,12 +29,15 @@ struct EkfConfig {
     double zupt_accel_mag_window_s{0.6};     // window duration for stillness check
     double zupt_speed_gate_m_s{2.5};         // speed gate to avoid false triggers
 
-    // Step 20 & Step 22: Short-horizon settling and curvature-adaptive NHC
+    // Step 20, Step 22 & Step 24: Short-horizon settling and curvature-adaptive NHC
     double nhc_settle_duration_s{2.0};        // Settling time constant tau [s]
     double nhc_settle_sigma_extra{4.0};       // Initial extra sigma at t=t0 [m/s]
-    double nhc_curv_c_coeff{2.0};             // Step 22: Kinematic centripetal accel coeff (k_c) for a_c = v * w_yaw
+    double nhc_curv_c_coeff{2.0};             // Kinematic centripetal accel coeff (k_c) for a_c = v * w_yaw
     double nhc_curv_lat_coeff{0.0};           // Deprecated Step 20 raw accel coeff
     double nhc_curv_yaw_coeff{0.0};           // Curvature inflation coefficient for direct yaw rate
+    double nhc_curv_lpf_cutoff_hz{2.0};       // Step 24: Low-pass filter cutoff for yaw rate [Hz]
+    bool nhc_curv_use_speed_floor{true};      // Step 24: Pre-outage speed floor v_curv = max(v, v0)
+    bool nhc_curv_use_nav_yaw{true};          // Step 24: Mount-orientation-invariant nav-frame yaw rate
 };
 
 struct ImuBufferedSample {
@@ -124,6 +127,8 @@ public:
     // Diagnostic & testing getters for adaptive NHC measurement noise
     double computeNhcSigmaLat() const noexcept;
     double computeNhcSigmaVert() const noexcept;
+    double getSpeedFloor() const noexcept { return v0_; }
+    double getOmegaYawFilt() const noexcept { return std::abs(omega_yaw_filt_); }
 
 private:
     void initCovariance();
@@ -144,6 +149,11 @@ private:
     double lat0_{0.0};
     double lon0_{0.0};
     double alt0_{0.0};
+
+    // Step 24: Pre-outage speed floor and low-pass filtered horizontal yaw rate
+    double v0_{0.0};
+    double omega_yaw_filt_{0.0};
+    double last_t_lpf_{-1.0};
 
     // Last IMU readings for trapezoidal integration & adaptive noise calculation
     Vector3d last_accel_nav_{0.0, 0.0, 0.0};

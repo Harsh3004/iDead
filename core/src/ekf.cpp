@@ -78,6 +78,11 @@ void ErrorStateEkf::initializeWithAttitude(
     last_f_body_ = initial_accel;
     last_omega_body_ = Vector3d(0.0, 0.0, 0.0);
 
+    // Step 24: Pre-outage speed floor and low-pass filtered horizontal yaw rate
+    v0_ = speed_ms;
+    omega_yaw_filt_ = 0.0;
+    last_t_lpf_ = -1.0;
+
     initCovariance();
     imu_buffer_.clear();
     is_initialized_ = true;
@@ -112,6 +117,26 @@ void ErrorStateEkf::predict(double t, const Vector3d& f_body, const Vector3d& om
     // 2. Attitude propagation via quaternion rotation vector
     const Quaternion dq = Quaternion::fromRotationVector(omega_unbiased * dt);
     q_ = (q_ * dq).normalized();
+
+    // Step 24: Filter signed horizontal yaw rate before taking absolute value to reject rotational vibration
+    double w_yaw_signed = 0.0;
+    if (config_.nhc_curv_use_nav_yaw) {
+        const Vector3d omega_nav = q_.rotate(omega_unbiased);
+        w_yaw_signed = omega_nav.z;
+    } else {
+        w_yaw_signed = omega_unbiased.z;
+    }
+
+    if (last_t_lpf_ < 0.0) {
+        omega_yaw_filt_ = w_yaw_signed;
+    } else if (config_.nhc_curv_lpf_cutoff_hz > 1e-4) {
+        const double tau = 1.0 / (2.0 * kPi * config_.nhc_curv_lpf_cutoff_hz);
+        const double alpha = dt / (dt + tau);
+        omega_yaw_filt_ += alpha * (w_yaw_signed - omega_yaw_filt_);
+    } else {
+        omega_yaw_filt_ = w_yaw_signed;
+    }
+    last_t_lpf_ = t;
 
     // 3. Specific force resolution and gravity subtraction
     const Matrix<3, 3> R = Matrix<3, 3>::fromQuaternion(q_);
@@ -286,8 +311,19 @@ double ErrorStateEkf::computeNhcSigmaLat() const noexcept {
     }
 
     const double speed = getSpeed();
-    const double w_yaw = std::abs(last_omega_body_.z - b_gyro_.z);
-    const double a_c = speed * w_yaw;
+    const double v_curv = config_.nhc_curv_use_speed_floor ? std::max(speed, v0_) : speed;
+
+    double w_yaw = 0.0;
+    if (last_t_lpf_ >= 0.0) {
+        w_yaw = omega_yaw_filt_;
+    } else if (config_.nhc_curv_use_nav_yaw) {
+        const Vector3d omega_unbiased = last_omega_body_ - b_gyro_;
+        w_yaw = std::abs(q_.rotate(omega_unbiased).z);
+    } else {
+        w_yaw = std::abs(last_omega_body_.z - b_gyro_.z);
+    }
+
+    const double a_c = v_curv * w_yaw;
 
     const double c_term = config_.nhc_curv_c_coeff * a_c;
     const double yaw_term = config_.nhc_curv_yaw_coeff * w_yaw;

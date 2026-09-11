@@ -36,6 +36,7 @@ CONFIG_CORRECTED = "corrected_init_strapdown_v1"
 CONFIG_EKF = "ekf_zupt_nhc_v1"
 CONFIG_EKF_V2 = "ekf_zupt_nhc_v2"
 CONFIG_EKF_V3 = "ekf_zupt_nhc_v3"
+CONFIG_EKF_V4 = "ekf_zupt_nhc_v4"
 
 
 def run_cpp_ekf_replay(
@@ -43,7 +44,7 @@ def run_cpp_ekf_replay(
     cache_dir: Path,
     out_dir: Path,
     attitude_csv: Path,
-    mode: str = "ekf_v3",
+    mode: str = "ekf_v4",
 ) -> float:
     """Execute C++ replay binary in EKF mode and measure wall-clock duration in seconds."""
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -74,10 +75,10 @@ def run_cpp_ekf_replay(
 def score_ekf_dataset(
     manifest_csv: Path = Path("data/processed/outages/manifest.csv"),
     outages_dir: Path = Path("data/processed/outages"),
-    predictions_dir: Path = Path("data/processed/cpp_predictions_ekf_v3"),
+    predictions_dir: Path = Path("data/processed/cpp_predictions_ekf_v4"),
     attitude_csv: Path = Path("results/module_b_initial_attitude.csv"),
     leaderboard_csv: Path = Path("results/leaderboard.csv"),
-    config_name: str = CONFIG_EKF_V3,
+    config_name: str = CONFIG_EKF_V4,
 ) -> Tuple[pd.DataFrame, float]:
     """Score all 253 eligible paired instances and append to results/leaderboard.csv."""
     tiers = load_module_b_tiers(attitude_csv)
@@ -795,11 +796,246 @@ def generate_step22_report(
     return report_text
 
 
+def generate_step24_report(
+    leaderboard_csv: Path = Path("results/leaderboard.csv"),
+    attitude_csv: Path = Path("results/module_b_initial_attitude.csv"),
+    replay_wall_clock_s: float = 0.0,
+    report_path: Optional[Path] = Path("results/step24_ekf_v4_evaluation_report.md"),
+) -> str:
+    """Compute and format the full Step 24 comparative evaluation report (v4 vs v3, v2, v1, corrected)."""
+    df = pd.read_csv(leaderboard_csv)
+    tiers = load_module_b_tiers(attitude_csv)
+    eligible_df = df[(df["run_id"].isin(tiers.keys())) & (df["has_ground_truth"] == True)].copy()
+
+    lines: List[str] = []
+    lines.append("# Step 24: EKF v4 Evaluation Report — Curvature Signal Axis Invariance, Speed Floor & Vibration Rejection\n")
+    lines.append(f"**Date:** {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
+    lines.append(f"**Replay Execution Time (Batch 253 instances):** {replay_wall_clock_s:.3f} seconds ({replay_wall_clock_s*1000.0:.1f} ms, {(replay_wall_clock_s/253.0)*1000.0:.2f} ms/outage)\n")
+
+    lines.append("## 1. Executive Summary & Physical Fixes Delivered\n")
+    lines.append(
+        "Step 24 implements three interlocking physical fixes to the EKF curvature-adaptive Non-Holonomic Constraint (NHC):\n"
+        "1. **Pre-Outage Speed Floor ($v_{curv} = \\max(v_{speed}, v_0)$):** Decouples centrifugal acceleration $a_c$ from "
+        "dead-reckoned forward velocity collapse under persistent turn deceleration, guaranteeing sustained curvature inflation throughout turns.\n"
+        "2. **Mount-Orientation Invariant Yaw Rate ($[\\mathbf{R}(\\mathbf{q}) \\cdot (\\boldsymbol{\\omega}_b - \\mathbf{b}_g)]_z$):** "
+        "Extracts the true horizontal turning rate in the gravity-aligned local navigation frame (ENU Up), making turn detection "
+        "fully invariant to phone mounting pitch and roll (windshield cradle, dashboard flat, cup holder portrait).\n"
+        "3. **First-Order IIR Low-Pass Filter ($f_c = 2.0\\text{ Hz}$):** Filters the signed horizontal yaw rate before computing "
+        "$a_c = v_{curv} \\cdot |\\omega_{yaw,filt}|$, rejecting high-frequency road-induced angular vibration without rectifying zero-mean noise.\n"
+    )
+
+    durations = [10, 30, 60, 120, 180]
+
+    # 2. Multi-Horizon Median Table
+    lines.append("## 2. Seven-Way Median & p95 Performance Comparison (Paired Ground-Truth N=253)\n")
+    lines.append("| Outage | N | CV Med (m) | Bare Med (m) | Corr Med (m) | EKF v1 Med (m) | EKF v2 Med (m) | EKF v3 Med (m) | EKF v4 Med (m) | EKF v4 p95 (m) | Delta vs Corr | Imp vs Corr | Delta vs v3 | Imp vs v3 | Delta vs v2 | Imp vs v2 | Delta vs v1 | Imp vs v1 |")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+
+    summary_rows: List[Dict[str, Any]] = []
+
+    for d in durations:
+        sub_cv = eligible_df[(eligible_df["config"] == CONFIG_CV) & (eligible_df["outage_s"] == d)]
+        sub_bare = eligible_df[(eligible_df["config"] == CONFIG_BARE) & (eligible_df["outage_s"] == d)]
+        sub_corr = eligible_df[(eligible_df["config"] == CONFIG_CORRECTED) & (eligible_df["outage_s"] == d)]
+        sub_v1 = eligible_df[(eligible_df["config"] == CONFIG_EKF) & (eligible_df["outage_s"] == d)]
+        sub_v2 = eligible_df[(eligible_df["config"] == CONFIG_EKF_V2) & (eligible_df["outage_s"] == d)]
+        sub_v3 = eligible_df[(eligible_df["config"] == CONFIG_EKF_V3) & (eligible_df["outage_s"] == d)]
+        sub_v4 = eligible_df[(eligible_df["config"] == CONFIG_EKF_V4) & (eligible_df["outage_s"] == d)]
+
+        n = len(sub_v4)
+        med_cv = sub_cv["final_pos_error_m"].median()
+        med_bare = sub_bare["final_pos_error_m"].median()
+        med_corr = sub_corr["final_pos_error_m"].median()
+        med_v1 = sub_v1["final_pos_error_m"].median()
+        med_v2 = sub_v2["final_pos_error_m"].median()
+        med_v3 = sub_v3["final_pos_error_m"].median()
+        med_v4 = sub_v4["final_pos_error_m"].median()
+        p95_v4 = sub_v4["final_pos_error_m"].quantile(0.95)
+
+        delta_vs_corr = med_v4 - med_corr
+        imp_vs_corr = ((med_corr - med_v4) / med_corr) * 100.0 if med_corr > 0 else 0.0
+        delta_vs_v3 = med_v4 - med_v3
+        imp_vs_v3 = ((med_v3 - med_v4) / med_v3) * 100.0 if med_v3 > 0 else 0.0
+        delta_vs_v2 = med_v4 - med_v2
+        imp_vs_v2 = ((med_v2 - med_v4) / med_v2) * 100.0 if med_v2 > 0 else 0.0
+        delta_vs_v1 = med_v4 - med_v1
+        imp_vs_v1 = ((med_v1 - med_v4) / med_v1) * 100.0 if med_v1 > 0 else 0.0
+
+        lines.append(
+            f"| {d}s | {n} | {med_cv:.1f} | {med_bare:.1f} | {med_corr:.1f} | {med_v1:.1f} | {med_v2:.1f} | {med_v3:.1f} | **{med_v4:.1f}** | {p95_v4:.1f} | {delta_vs_corr:+.1f} | {imp_vs_corr:+.1f}% | {delta_vs_v3:+.1f} | {imp_vs_v3:+.1f}% | {delta_vs_v2:+.1f} | {imp_vs_v2:+.1f}% | {delta_vs_v1:+.1f} | {imp_vs_v1:+.1f}% |"
+        )
+
+        summary_rows.append({
+            "config": CONFIG_EKF_V4,
+            "outage_s": d,
+            "n_paired": n,
+            "median_final_pos_error_m": round(med_v4, 4),
+            "p95_final_pos_error_m": round(p95_v4, 4),
+            "median_pct_of_distance": round(sub_v4["pct_of_distance"].median(), 4),
+            "p95_pct_of_distance": round(sub_v4["pct_of_distance"].quantile(0.95), 4),
+            "median_heading_error_deg": round(sub_v4["heading_error_deg"].median(), 4),
+        })
+
+    # 3. Head-to-Head Win Rate Breakdowns
+    lines.append("\n## 3. Fleetwide Head-to-Head Win-Rate Comparisons (N=253)\n")
+    piv = eligible_df.pivot(index=["outage_id", "outage_s", "run_id"], columns="config", values="final_pos_error_m").reset_index()
+
+    # Table: v4 vs v3
+    lines.append("### A. EKF v4 vs. EKF v3 (Direct Generation Improvement)")
+    lines.append("| Outage | N | v4 Improved | v4 Regressed | Unchanged | v4 Win Rate vs v3 | Median Gain on Improved (m) | Median Loss on Regressed (m) |")
+    lines.append("|---|---|---|---|---|---|---|---|")
+    for d in durations:
+        sub = piv[piv["outage_s"] == d].copy()
+        sub["diff"] = sub[CONFIG_EKF_V4] - sub[CONFIG_EKF_V3]
+        n = len(sub)
+        imp = sub[sub["diff"] < -0.1]
+        reg = sub[sub["diff"] > 0.1]
+        unch = sub[sub["diff"].abs() <= 0.1]
+        win_rate = (len(imp) / n) * 100.0 if n > 0 else 0.0
+        med_gain = (-imp["diff"]).median() if not imp.empty else 0.0
+        med_loss = reg["diff"].median() if not reg.empty else 0.0
+        lines.append(f"| {d}s | {n} | {len(imp)} | {len(reg)} | {len(unch)} | **{win_rate:.1f}%** | {med_gain:.2f} | {med_loss:.2f} |")
+
+    piv["diff_v4_v3"] = piv[CONFIG_EKF_V4] - piv[CONFIG_EKF_V3]
+    tot_imp_v3 = len(piv[piv["diff_v4_v3"] < -0.1])
+    tot_reg_v3 = len(piv[piv["diff_v4_v3"] > 0.1])
+    tot_unch_v3 = len(piv[piv["diff_v4_v3"].abs() <= 0.1])
+    lines.append(f"\n- **Overall Fleetwide v4 vs. v3 Win Rate:** **{tot_imp_v3}/{len(piv)} ({tot_imp_v3/len(piv)*100.0:.1f}%)** (Improved: {tot_imp_v3}, Regressed: {tot_reg_v3}, Unchanged: {tot_unch_v3})\n")
+
+    # Table: v4 vs v2
+    lines.append("### B. EKF v4 vs. EKF v2 (Road-Vibration Leakage Baseline)")
+    lines.append("| Outage | N | v4 Improved | v4 Regressed | Unchanged | v4 Win Rate vs v2 | Median Gain on Improved (m) | Median Loss on Regressed (m) |")
+    lines.append("|---|---|---|---|---|---|---|---|")
+    for d in durations:
+        sub = piv[piv["outage_s"] == d].copy()
+        sub["diff"] = sub[CONFIG_EKF_V4] - sub[CONFIG_EKF_V2]
+        n = len(sub)
+        imp = sub[sub["diff"] < -0.1]
+        reg = sub[sub["diff"] > 0.1]
+        unch = sub[sub["diff"].abs() <= 0.1]
+        win_rate = (len(imp) / n) * 100.0 if n > 0 else 0.0
+        med_gain = (-imp["diff"]).median() if not imp.empty else 0.0
+        med_loss = reg["diff"].median() if not reg.empty else 0.0
+        lines.append(f"| {d}s | {n} | {len(imp)} | {len(reg)} | {len(unch)} | **{win_rate:.1f}%** | {med_gain:.2f} | {med_loss:.2f} |")
+
+    piv["diff_v4_v2"] = piv[CONFIG_EKF_V4] - piv[CONFIG_EKF_V2]
+    tot_imp_v2 = len(piv[piv["diff_v4_v2"] < -0.1])
+    tot_reg_v2 = len(piv[piv["diff_v4_v2"] > 0.1])
+    tot_unch_v2 = len(piv[piv["diff_v4_v2"].abs() <= 0.1])
+    lines.append(f"\n- **Overall Fleetwide v4 vs. v2 Win Rate:** **{tot_imp_v2}/{len(piv)} ({tot_imp_v2/len(piv)*100.0:.1f}%)** (Improved: {tot_imp_v2}, Regressed: {tot_reg_v2}, Unchanged: {tot_unch_v2})\n")
+
+    # Table: v4 vs v1
+    lines.append("### C. EKF v4 vs. EKF v1 (Original Flat NHC Baseline)")
+    lines.append("| Outage | N | v4 Improved | v4 Regressed | Unchanged | v4 Win Rate vs v1 | Median Gain on Improved (m) | Median Loss on Regressed (m) |")
+    lines.append("|---|---|---|---|---|---|---|---|")
+    for d in durations:
+        sub = piv[piv["outage_s"] == d].copy()
+        sub["diff"] = sub[CONFIG_EKF_V4] - sub[CONFIG_EKF]
+        n = len(sub)
+        imp = sub[sub["diff"] < -0.1]
+        reg = sub[sub["diff"] > 0.1]
+        unch = sub[sub["diff"].abs() <= 0.1]
+        win_rate = (len(imp) / n) * 100.0 if n > 0 else 0.0
+        med_gain = (-imp["diff"]).median() if not imp.empty else 0.0
+        med_loss = reg["diff"].median() if not reg.empty else 0.0
+        lines.append(f"| {d}s | {n} | {len(imp)} | {len(reg)} | {len(unch)} | **{win_rate:.1f}%** | {med_gain:.2f} | {med_loss:.2f} |")
+
+    piv["diff_v4_v1"] = piv[CONFIG_EKF_V4] - piv[CONFIG_EKF]
+    tot_imp_v1 = len(piv[piv["diff_v4_v1"] < -0.1])
+    tot_reg_v1 = len(piv[piv["diff_v4_v1"] > 0.1])
+    tot_unch_v1 = len(piv[piv["diff_v4_v1"].abs() <= 0.1])
+    lines.append(f"\n- **Overall Fleetwide v4 vs. v1 Win Rate:** **{tot_imp_v1}/{len(piv)} ({tot_imp_v1/len(piv)*100.0:.1f}%)** (Improved: {tot_imp_v1}, Regressed: {tot_reg_v1}, Unchanged: {tot_unch_v1})\n")
+
+    # Table: v4 vs Corrected Strapdown
+    lines.append("### D. EKF v4 vs. Corrected Strapdown Baseline")
+    lines.append("| Outage | N | v4 Improved | v4 Regressed | Unchanged | v4 Win Rate vs Corr | Median Gain on Improved (m) | Median Loss on Regressed (m) |")
+    lines.append("|---|---|---|---|---|---|---|---|")
+    for d in durations:
+        sub = piv[piv["outage_s"] == d].copy()
+        sub["diff"] = sub[CONFIG_EKF_V4] - sub[CONFIG_CORRECTED]
+        n = len(sub)
+        imp = sub[sub["diff"] < -0.1]
+        reg = sub[sub["diff"] > 0.1]
+        unch = sub[sub["diff"].abs() <= 0.1]
+        win_rate = (len(imp) / n) * 100.0 if n > 0 else 0.0
+        med_gain = (-imp["diff"]).median() if not imp.empty else 0.0
+        med_loss = reg["diff"].median() if not reg.empty else 0.0
+        lines.append(f"| {d}s | {n} | {len(imp)} | {len(reg)} | {len(unch)} | **{win_rate:.1f}%** | {med_gain:.2f} | {med_loss:.2f} |")
+
+    piv["diff_v4_corr"] = piv[CONFIG_EKF_V4] - piv[CONFIG_CORRECTED]
+    tot_imp_corr = len(piv[piv["diff_v4_corr"] < -0.1])
+    tot_reg_corr = len(piv[piv["diff_v4_corr"] > 0.1])
+    tot_unch_corr = len(piv[piv["diff_v4_corr"].abs() <= 0.1])
+    lines.append(f"\n- **Overall Fleetwide v4 vs. Corrected Win Rate:** **{tot_imp_corr}/{len(piv)} ({tot_imp_corr/len(piv)*100.0:.1f}%)** (Improved: {tot_imp_corr}, Regressed: {tot_reg_corr}, Unchanged: {tot_unch_corr})\n")
+
+    # 4. Straight-Road Vibration Immunity Audit
+    lines.append("## 4. Straight-Road Road Vibration Immunity Audit\n")
+    lines.append(
+        "Verification that v4 completely preserves the straight-road asphalt vibration immunity achieved in Step 22:\n\n"
+        "| Run ID | Outage | Corrected (m) | EKF v1 (m) | EKF v2 (m) | EKF v3 (m) | EKF v4 (m) | Recovery vs v2 (m) | Physical Notes |\n"
+        "|---|---|---|---|---|---|---|---|---|"
+    )
+
+    immunity_runs = ["pair_S1", "pair_S3b", "pair_Vta1a", "pair_Vta17"]
+    for rid in immunity_runs:
+        sub_run = piv[piv["run_id"] == rid].sort_values("outage_s", ascending=False)
+        if not sub_run.empty:
+            r = sub_run.iloc[0]
+            d = r["outage_s"]
+            e_corr = r[CONFIG_CORRECTED]
+            e_v1 = r[CONFIG_EKF]
+            e_v2 = r[CONFIG_EKF_V2]
+            e_v3 = r[CONFIG_EKF_V3]
+            e_v4 = r[CONFIG_EKF_V4]
+            rec = e_v4 - e_v2
+            lines.append(f"| `{rid}` | {d}s | {e_corr:.1f} | {e_v1:.1f} | {e_v2:.1f} | {e_v3:.1f} | **{e_v4:.1f}** | **{rec:+.1f} m** | Straight road vibration immunity holds |")
+
+    # 5. Curve Dynamic Bias & Speed Floor Recovery Audit
+    lines.append("\n## 5. Curve Dynamic Bias & Speed Floor Recovery Audit\n")
+    lines.append(
+        "Audit of curved instances diagnosed in Step 23 where v3 suffered speed collapse or axis projection errors:\n\n"
+        "| Run ID | Outage | Corrected (m) | EKF v1 (m) | EKF v2 (m) | EKF v3 (m) | EKF v4 (m) | Delta vs v3 (m) | Diagnosis Mechanism |\n"
+        "|---|---|---|---|---|---|---|---|---|"
+    )
+
+    curve_runs = ["pair_Vta2", "pair_Vta21", "pair_Vta23", "pair_Vta27", "pair_Vta29", "pair_S3c"]
+    for rid in curve_runs:
+        sub_run = piv[piv["run_id"] == rid].sort_values("outage_s", ascending=False)
+        if not sub_run.empty:
+            for _, r in sub_run.iterrows():
+                d = r["outage_s"]
+                e_corr = r[CONFIG_CORRECTED]
+                e_v1 = r[CONFIG_EKF]
+                e_v2 = r[CONFIG_EKF_V2]
+                e_v3 = r[CONFIG_EKF_V3]
+                e_v4 = r[CONFIG_EKF_V4]
+                delta_v3 = e_v4 - e_v3
+                lines.append(f"| `{rid}` | {d}s | {e_corr:.1f} | {e_v1:.1f} | {e_v2:.1f} | {e_v3:.1f} | **{e_v4:.1f}** | **{delta_v3:+.1f} m** | Speed floor & mount-invariant yaw |")
+
+    report_text = "\n".join(lines)
+
+    if report_path is not None:
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write(report_text)
+        print(f"Saved evaluation report to {report_path}")
+
+        summary_path = Path("results/leaderboard_summary.csv")
+        if summary_path.exists():
+            sum_df = pd.read_csv(summary_path)
+            sum_df = sum_df[sum_df["config"] != CONFIG_EKF_V4]
+            new_sum_df = pd.DataFrame(summary_rows)
+            combined_sum = pd.concat([sum_df, new_sum_df], ignore_index=True)
+            combined_sum.to_csv(summary_path, index=False)
+            print(f"Updated {summary_path} with {len(new_sum_df)} new {CONFIG_EKF_V4} rows.")
+
+    return report_text
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Step 22: C++ EKF Batch Replay, Scoring, and Evaluation")
+    parser = argparse.ArgumentParser(description="Step 24: C++ EKF Batch Replay, Scoring, and Evaluation")
     parser.add_argument("--bin", type=str, default="build/core/idr_replay.exe", help="Path to idr_replay executable")
     parser.add_argument("--cache-dir", type=str, default="data/processed/_cpp_replay_cache", help="Replay cache directory")
-    parser.add_argument("--version", type=str, choices=["v1", "v2", "v3"], default="v3", help="EKF version to run and score (v1, v2, or v3)")
+    parser.add_argument("--version", type=str, choices=["v1", "v2", "v3", "v4"], default="v4", help="EKF version to run and score (v1, v2, v3, or v4)")
     parser.add_argument("--out-dir", type=str, default="", help="EKF predictions output directory (default based on version)")
     parser.add_argument("--attitude-csv", type=str, default="results/module_b_initial_attitude.csv", help="Attitude CSV")
     parser.add_argument("--leaderboard-csv", type=str, default="results/leaderboard.csv", help="Leaderboard CSV")
@@ -819,10 +1055,14 @@ def main():
         config_name = CONFIG_EKF_V2
         mode = "ekf_v2"
         out_dir = Path(args.out_dir) if args.out_dir else Path("data/processed/cpp_predictions_ekf_v2")
-    else:
+    elif args.version == "v3":
         config_name = CONFIG_EKF_V3
         mode = "ekf_v3"
         out_dir = Path(args.out_dir) if args.out_dir else Path("data/processed/cpp_predictions_ekf_v3")
+    else:
+        config_name = CONFIG_EKF_V4
+        mode = "ekf_v4"
+        out_dir = Path(args.out_dir) if args.out_dir else Path("data/processed/cpp_predictions_ekf_v4")
 
     wall_clock_s = 0.0
     if not args.skip_replay:
@@ -849,8 +1089,14 @@ def main():
             attitude_csv=attitude_csv,
             replay_wall_clock_s=wall_clock_s,
         )
-    else:
+    elif args.version == "v3":
         report = generate_step22_report(
+            leaderboard_csv=leaderboard_csv,
+            attitude_csv=attitude_csv,
+            replay_wall_clock_s=wall_clock_s,
+        )
+    else:
+        report = generate_step24_report(
             leaderboard_csv=leaderboard_csv,
             attitude_csv=attitude_csv,
             replay_wall_clock_s=wall_clock_s,

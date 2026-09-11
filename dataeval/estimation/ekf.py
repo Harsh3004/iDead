@@ -115,12 +115,15 @@ class EkfConfig:
     zupt_accel_mag_window_s: float = 0.6      # window duration for variance check
     zupt_speed_gate_m_s: float = 2.5          # velocity gate to prevent false trigger on highway
 
-    # Step 20 & Step 22: Short-horizon settling and curvature-adaptive NHC
+    # Step 20, Step 22 & Step 24: Short-horizon settling and curvature-adaptive NHC
     nhc_settle_duration_s: float = 2.0        # Settling time constant tau [s]
     nhc_settle_sigma_extra: float = 4.0       # Initial extra sigma at t=t0 [m/s]
-    nhc_curv_c_coeff: float = 2.0             # Step 22: Kinematic centripetal accel coeff (k_c) for a_c = v * w_yaw
+    nhc_curv_c_coeff: float = 2.0             # Kinematic centripetal accel coeff (k_c) for a_c = v * w_yaw
     nhc_curv_lat_coeff: float = 0.0           # Deprecated Step 20 raw accel coeff
     nhc_curv_yaw_coeff: float = 0.0           # Curvature inflation coefficient for direct yaw rate
+    nhc_curv_lpf_cutoff_hz: float = 2.0       # Step 24: Low-pass filter cutoff for yaw rate [Hz]
+    nhc_curv_use_speed_floor: bool = True     # Step 24: Pre-outage speed floor v_curv = max(v, v0)
+    nhc_curv_use_nav_yaw: bool = True         # Step 24: Mount-orientation-invariant nav-frame yaw rate
 
 
 class ErrorStateEkf:
@@ -148,6 +151,11 @@ class ErrorStateEkf:
         # Error Covariance Matrix P in R^{15 x 15}
         self.P: np.ndarray = np.eye(15, dtype=float)
         self._init_covariance()
+
+        # Step 24: Pre-outage speed floor and low-pass filtered horizontal yaw rate
+        self.v0: float = 0.0
+        self.omega_yaw_filt: float = 0.0
+        self.last_t_lpf: float = -1.0
 
         # Last kinematic acceleration for trapezoidal integration & adaptive noise
         self.last_accel_nav: np.ndarray = np.zeros(3, dtype=float)
@@ -211,6 +219,11 @@ class ErrorStateEkf:
         self.last_f_body = init_f.copy()
         self.last_omega_body = np.zeros(3, dtype=float)
 
+        # Step 24: Pre-outage speed floor and low-pass filtered horizontal yaw rate
+        self.v0 = speed_ms
+        self.omega_yaw_filt = 0.0
+        self.last_t_lpf = -1.0
+
         self._init_covariance()
         self.imu_buffer = []
         self.is_initialized = True
@@ -245,6 +258,24 @@ class ErrorStateEkf:
 
         # 3. Specific force resolution and gravity subtraction
         R = quat_to_rot_matrix(self.q)
+
+        # Step 24: Filter signed horizontal yaw rate before taking absolute value to reject rotational vibration
+        if self.cfg.nhc_curv_use_nav_yaw:
+            omega_nav = R @ omega_unbiased
+            w_yaw_signed = omega_nav[2]
+        else:
+            w_yaw_signed = omega_unbiased[2]
+
+        if self.last_t_lpf < 0.0:
+            self.omega_yaw_filt = w_yaw_signed
+        elif self.cfg.nhc_curv_lpf_cutoff_hz > 1e-4:
+            tau = 1.0 / (2.0 * np.pi * self.cfg.nhc_curv_lpf_cutoff_hz)
+            alpha = dt / (dt + tau)
+            self.omega_yaw_filt += alpha * (w_yaw_signed - self.omega_yaw_filt)
+        else:
+            self.omega_yaw_filt = w_yaw_signed
+        self.last_t_lpf = t
+
         f_nav = R @ f_unbiased
         accel_nav = f_nav + np.array([0.0, 0.0, -self.kGravity], dtype=float)
 
@@ -319,8 +350,18 @@ class ErrorStateEkf:
             settle_extra = self.cfg.nhc_settle_sigma_extra * np.exp(-dt_init / self.cfg.nhc_settle_duration_s)
 
         speed = float(np.linalg.norm(self.v_enu))
-        w_yaw = abs(self.last_omega_body[2] - self.b_gyro[2])
-        a_c = speed * w_yaw
+        v_curv = max(speed, self.v0) if self.cfg.nhc_curv_use_speed_floor else speed
+
+        if self.last_t_lpf >= 0.0:
+            w_yaw = abs(self.omega_yaw_filt)
+        elif self.cfg.nhc_curv_use_nav_yaw:
+            R = quat_to_rot_matrix(self.q)
+            w_nav = R @ (self.last_omega_body - self.b_gyro)
+            w_yaw = abs(w_nav[2])
+        else:
+            w_yaw = abs(self.last_omega_body[2] - self.b_gyro[2])
+
+        a_c = v_curv * w_yaw
 
         c_term = self.cfg.nhc_curv_c_coeff * a_c
         yaw_term = self.cfg.nhc_curv_yaw_coeff * w_yaw

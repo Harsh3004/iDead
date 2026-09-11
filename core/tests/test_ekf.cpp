@@ -185,7 +185,8 @@ bool runCrossCheckInstance(
     double expected_python_lat,
     double expected_python_lon,
     double expected_python_error_m,
-    double tol_error_m
+    double tol_error_m,
+    const idr::EkfConfig& config = idr::EkfConfig{}
 ) {
     std::ifstream in(cache_path);
     if (!in.is_open()) {
@@ -225,7 +226,7 @@ bool runCrossCheckInstance(
     std::string line2; // Column header
     std::getline(in, line2);
 
-    idr::ErrorStateEkf ekf;
+    idr::ErrorStateEkf ekf(config);
     ekf.initializeWithAttitude(t0, lat0, lon0, alt0, speed0, heading0, q0, gb0, idr::Vector3d(0, 0, 0), idr::Vector3d(ax0, ay0, az0));
 
     std::string row;
@@ -301,7 +302,15 @@ void testNumericalCrossCheck() {
     const idr::Vector3d gb_vta2(-0.00259082, 0.00719796, -0.0053898);
 
     std::cout << "--> Cross-checking instance 2: pair_Vta2__180s__0\n";
-    runCrossCheckInstance(path_vta2, q_vta2, gb_vta2, 52.79245735, -1.62577604, 1585.87, 0.05);
+    idr::EkfConfig cfg_v1;
+    cfg_v1.nhc_settle_sigma_extra = 0.0;
+    cfg_v1.nhc_curv_c_coeff = 0.0;
+    cfg_v1.nhc_curv_lat_coeff = 0.0;
+    cfg_v1.nhc_curv_yaw_coeff = 0.0;
+    cfg_v1.nhc_curv_lpf_cutoff_hz = 0.0;
+    cfg_v1.nhc_curv_use_speed_floor = false;
+    cfg_v1.nhc_curv_use_nav_yaw = false;
+    runCrossCheckInstance(path_vta2, q_vta2, gb_vta2, 52.79256590, -1.62431522, 1585.87, 0.05, cfg_v1);
 
     std::cout << "  [PASS] Numerical cross-check verified on reference instances.\n";
 }
@@ -342,10 +351,11 @@ void testCurvatureAdaptiveNhc() {
     ekf.predict(30.1, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.1));
     const double sigma_curve_lat = ekf.computeNhcSigmaLat();
     const double current_speed = ekf.getSpeed();
-    const double w_yaw = std::abs(0.1 - ekf.getGyroBias().z);
-    const double expected_ac = current_speed * w_yaw;
+    const double v_curv = std::max(current_speed, ekf.getSpeedFloor());
+    const double w_yaw_filt = ekf.getOmegaYawFilt();
+    const double expected_ac = v_curv * w_yaw_filt;
     const double expected_sigma = 0.15 * std::sqrt(1.0 + (2.0 * expected_ac) * (2.0 * expected_ac));
-    std::cout << "  Sustained curve (speed=" << current_speed << " m/s, a_c=" << expected_ac << " m/s^2) sigma_lat: " << sigma_curve_lat << " m/s (expected ~" << expected_sigma << ")\n";
+    std::cout << "  Sustained curve (v_curv=" << v_curv << " m/s, w_filt=" << w_yaw_filt << " rad/s, a_c=" << expected_ac << " m/s^2) sigma_lat: " << sigma_curve_lat << " m/s (expected ~" << expected_sigma << ")\n";
     assert(std::abs(sigma_curve_lat - expected_sigma) < 1e-4);
     assert(sigma_curve_lat > 0.30); // Significantly inflated above 0.15 m/s baseline
 
@@ -354,6 +364,101 @@ void testCurvatureAdaptiveNhc() {
     assert(std::abs(sigma_curve_vert - 0.15) < 1e-4);
 
     std::cout << "  [PASS] Step 22 Kinematic centripetal NHC noise & vibration immunity verified.\n";
+}
+
+void testStep24AxisInvariance() {
+    std::cout << "[RUN] testStep24AxisInvariance (Mount-Orientation Invariance)...\n";
+
+    // Simulate an identical physical 0.10 rad/s horizontal turn across 3 phone mounting attitudes:
+    // 1. Phone Flat: attitude flat, rotation on sensor Z
+    idr::EkfConfig cfg;
+    cfg.nhc_settle_duration_s = 0.0;
+    cfg.nhc_curv_lpf_cutoff_hz = 100.0; // bypass LPF for instantaneous step test
+
+    idr::ErrorStateEkf ekf_flat(cfg);
+    ekf_flat.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0);
+    ekf_flat.predict(0.1, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.10));
+    const double sigma_flat = ekf_flat.computeNhcSigmaLat();
+
+    // 2. Phone Portrait: pitched 90 deg forward (top of phone points along Nav North, screen points East)
+    // Horizontal turn rotates phone around body Y
+    const idr::Quaternion q_portrait = idr::Quaternion::fromEulerEnu(0.0, idr::ErrorStateEkf::kPi / 2.0, 0.0);
+    idr::ErrorStateEkf ekf_portrait(cfg);
+    ekf_portrait.initializeWithAttitude(0.0, 0.0, 0.0, 0.0, 20.0, 0.0, q_portrait);
+    ekf_portrait.predict(0.1, idr::Vector3d(0.0, idr::ErrorStateEkf::kGravity, 0.0), idr::Vector3d(0.0, 0.10, 0.0));
+    const double sigma_portrait = ekf_portrait.computeNhcSigmaLat();
+
+    // 3. Phone Landscape: rolled 90 deg (side of phone points along Nav Up)
+    // Horizontal turn rotates phone around body X
+    const idr::Quaternion q_landscape = idr::Quaternion::fromEulerEnu(0.0, 0.0, idr::ErrorStateEkf::kPi / 2.0);
+    idr::ErrorStateEkf ekf_landscape(cfg);
+    ekf_landscape.initializeWithAttitude(0.0, 0.0, 0.0, 0.0, 20.0, 0.0, q_landscape);
+    ekf_landscape.predict(0.1, idr::Vector3d(idr::ErrorStateEkf::kGravity, 0.0, 0.0), idr::Vector3d(0.10, 0.0, 0.0));
+    const double sigma_landscape = ekf_landscape.computeNhcSigmaLat();
+
+    std::cout << "  sigma_flat:      " << sigma_flat << " m/s\n";
+    std::cout << "  sigma_portrait:  " << sigma_portrait << " m/s\n";
+    std::cout << "  sigma_landscape: " << sigma_landscape << " m/s\n";
+
+    assert(std::abs(sigma_flat - sigma_portrait) < 1e-3);
+    assert(std::abs(sigma_flat - sigma_landscape) < 1e-3);
+    std::cout << "  [PASS] Mount-orientation invariance across Flat, Portrait, and Landscape confirmed.\n";
+}
+
+void testStep24SpeedCollapseDecoupling() {
+    std::cout << "[RUN] testStep24SpeedCollapseDecoupling (Pre-Outage Speed Floor)...\n";
+
+    idr::EkfConfig cfg;
+    cfg.nhc_settle_duration_s = 0.0;
+    cfg.nhc_curv_lpf_cutoff_hz = 100.0;
+    cfg.nhc_curv_use_speed_floor = true;
+
+    idr::ErrorStateEkf ekf(cfg);
+    // Initialized at 20 m/s highway speed
+    ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0);
+    assert(std::abs(ekf.getSpeedFloor() - 20.0) < 1e-5);
+
+    // Apply stationary ZUPT to collapse speed to near 0
+    for (int i = 1; i <= 50; ++i) {
+        ekf.predict(i * 0.1, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.0));
+        ekf.updateZupt();
+    }
+    const double collapsed_speed = ekf.getSpeed();
+    assert(collapsed_speed < 0.5); // Successfully collapsed to walking/stationary
+
+    // Now vehicle enters curve at 0.1 rad/s.
+    // Without speed floor, a_c = 0.5 * 0.1 = 0.05 m/s^2 -> sigma_lat ~ 0.151 m/s (clamped!)
+    // With speed floor, v_curv = max(0.5, 20.0) = 20.0 m/s -> a_c = 2.0 m/s^2 -> sigma_lat ~ 0.62 m/s
+    ekf.predict(5.1, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, 0.10));
+    const double sigma_with_floor = ekf.computeNhcSigmaLat();
+
+    std::cout << "  Collapsed speed: " << collapsed_speed << " m/s, speed floor: " << ekf.getSpeedFloor() << " m/s\n";
+    std::cout << "  sigma_lat with floor: " << sigma_with_floor << " m/s (expected > 0.60)\n";
+    assert(sigma_with_floor > 0.60);
+    std::cout << "  [PASS] Pre-outage speed floor preserves turn detection during velocity collapse.\n";
+}
+
+void testStep24VibrationLowPassFilter() {
+    std::cout << "[RUN] testStep24VibrationLowPassFilter (2.0 Hz LPF)...\n";
+
+    idr::EkfConfig cfg;
+    cfg.nhc_settle_duration_s = 0.0;
+    cfg.nhc_curv_lpf_cutoff_hz = 2.0; // 2.0 Hz cutoff
+
+    idr::ErrorStateEkf ekf(cfg);
+    ekf.initialize(0.0, 0.0, 0.0, 0.0, 20.0, 0.0);
+
+    // Inject high-frequency 10 Hz zero-mean rotational vibration (+/- 0.20 rad/s)
+    for (int i = 1; i <= 200; ++i) {
+        const double t = i * 0.01; // 100 Hz IMU
+        const double w_noise = (i % 2 == 0) ? 0.20 : -0.20;
+        ekf.predict(t, idr::Vector3d(0.0, 0.0, idr::ErrorStateEkf::kGravity), idr::Vector3d(0.0, 0.0, w_noise));
+    }
+
+    const double filtered_yaw = ekf.getOmegaYawFilt();
+    std::cout << "  Input noise amplitude: +/-0.20 rad/s, Filtered yaw rate: " << filtered_yaw << " rad/s\n";
+    assert(filtered_yaw < 0.05); // Attenuated by > 75% (> 12 dB)
+    std::cout << "  [PASS] Low-pass filter successfully attenuates high-frequency rotational vibration.\n";
 }
 
 void testSettlingGracePeriod() {
@@ -403,6 +508,9 @@ int main() {
     testNhcUpdate();
     testCovarianceStability();
     testCurvatureAdaptiveNhc();
+    testStep24AxisInvariance();
+    testStep24SpeedCollapseDecoupling();
+    testStep24VibrationLowPassFilter();
     testSettlingGracePeriod();
     testNumericalCrossCheck();
 

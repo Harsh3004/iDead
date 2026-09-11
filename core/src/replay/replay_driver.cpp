@@ -387,15 +387,25 @@ int main(int argc, char* argv[]) {
             batch_mode = true;
         } else if (arg == "--mode" && i + 1 < argc) {
             std::string mode_str = argv[++i];
-            if (mode_str == "ekf" || mode_str == "ekf_v3") {
+            if (mode_str == "ekf" || mode_str == "ekf_v4") {
                 use_ekf = true;
-                ekf_config = idr::EkfConfig(); // v3 default: kinematic centripetal curvature
+                ekf_config = idr::EkfConfig(); // v4 default: nav yaw + speed floor + LPF
+            } else if (mode_str == "ekf_v3") {
+                use_ekf = true;
+                ekf_config = idr::EkfConfig();
+                ekf_config.nhc_curv_c_coeff = 2.0;
+                ekf_config.nhc_curv_use_speed_floor = false;
+                ekf_config.nhc_curv_use_nav_yaw = false;
+                ekf_config.nhc_curv_lpf_cutoff_hz = 0.0;
             } else if (mode_str == "ekf_v2") {
                 use_ekf = true;
                 ekf_config = idr::EkfConfig();
                 ekf_config.nhc_curv_c_coeff = 0.0;
                 ekf_config.nhc_curv_lat_coeff = 5.0;
                 ekf_config.nhc_curv_yaw_coeff = 2.0;
+                ekf_config.nhc_curv_use_speed_floor = false;
+                ekf_config.nhc_curv_use_nav_yaw = false;
+                ekf_config.nhc_curv_lpf_cutoff_hz = 0.0;
             } else if (mode_str == "ekf_v1") {
                 use_ekf = true;
                 ekf_config = idr::EkfConfig();
@@ -403,6 +413,9 @@ int main(int argc, char* argv[]) {
                 ekf_config.nhc_curv_c_coeff = 0.0;
                 ekf_config.nhc_curv_lat_coeff = 0.0;
                 ekf_config.nhc_curv_yaw_coeff = 0.0;
+                ekf_config.nhc_curv_use_speed_floor = false;
+                ekf_config.nhc_curv_use_nav_yaw = false;
+                ekf_config.nhc_curv_lpf_cutoff_hz = 0.0;
             } else if (mode_str == "strapdown") {
                 use_ekf = false;
             }
@@ -415,8 +428,8 @@ int main(int argc, char* argv[]) {
                       << "  --cache-dir <dir>     Directory containing replay cache CSVs (default: data/processed/_cpp_replay_cache)\n"
                       << "  --out-dir <dir>       Destination directory for prediction CSVs (default: data/processed/cpp_predictions)\n"
                       << "  --attitude-csv <path> Path to module_b_initial_attitude.csv for initial attitude & gyro bias\n"
-                      << "  --mode <mode>         Estimation mode: 'strapdown', 'ekf'/'ekf_v3' (default EKF v3), 'ekf_v2', or 'ekf_v1'\n"
-                      << "  --ekf                 Shorthand for --mode ekf (15-State ES-EKF with ZUPT + NHC v3)\n"
+                      << "  --mode <mode>         Estimation mode: 'strapdown', 'ekf'/'ekf_v4' (default EKF v4), 'ekf_v3', 'ekf_v2', or 'ekf_v1'\n"
+                      << "  --ekf                 Shorthand for --mode ekf (15-State ES-EKF with ZUPT + NHC v4)\n"
                       << "  --batch               Run across all cached outage instances\n"
                       << "  --outage-id <id>      Replay a specific outage instance by ID\n"
                       << "  --help, -h            Show this help message\n";
